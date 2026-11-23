@@ -51,13 +51,32 @@ export default function Orders() {
             <input value={q} onChange={(e) => { setQ(e.target.value); setPage(0) }} className="input pl-9" placeholder={`Search order no. or ${isSales ? 'customer' : 'supplier'}`} />
           </div>
         </div>
-        <div className="scrollbar-thin flex gap-2 overflow-x-auto border-b border-slate-100 px-4 py-3">
+        <div className="no-scrollbar flex gap-2 overflow-x-auto border-b border-slate-100 px-4 py-3">
           {['all', ...flow].map((s) => {
             const c = s === 'all' ? all.length : all.filter((o) => o.status === s).length
             return <button key={s} onClick={() => { setStatus(s); setPage(0) }} className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold ${status === s ? 'bg-ink-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{s === 'all' ? 'All' : STATUS_LABEL[s]} · {c}</button>
           })}
         </div>
-        <div className="overflow-x-auto">
+        {/* Mobile cards */}
+        <div className="divide-y divide-slate-100 md:hidden">
+          {shown.map((o) => {
+            const open = !['delivered', 'received', 'cancelled'].includes(o.status)
+            const late = open && o.dueDate < now
+            return (
+              <button key={o.id} onClick={() => setOpenId(o.id)} className="block w-full p-4 text-left active:bg-slate-50">
+                <div className="flex items-center justify-between gap-2"><span className="font-bold text-ink-900">{o.number}</span><StatusBadge status={o.status} /></div>
+                <p className="mt-1 truncate text-sm text-slate-700">{partyName(o.party)}</p>
+                <div className="mt-2 flex items-center justify-between text-xs">
+                  <span className={late ? 'font-semibold text-rose-600' : 'text-slate-500'}>{late ? 'Overdue · ' : 'Due '}{fmtDate(o.dueDate)} · {o.items.length} item{o.items.length === 1 ? '' : 's'}</span>
+                  <span className="text-sm font-bold text-ink-900">{money(o.total)}</span>
+                </div>
+              </button>
+            )
+          })}
+          {shown.length === 0 && <Empty icon={ClipboardList} title="No orders found" text="Try another filter or create a new order" />}
+        </div>
+
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-sm">
             <thead className="bg-slate-50"><tr><th className="th">Order</th><th className="th">Date</th><th className="th">{isSales ? 'Customer' : 'Supplier'}</th><th className="th">Items</th><th className="th">Due</th><th className="th text-right">Total</th><th className="th text-right">Status</th></tr></thead>
             <tbody className="divide-y divide-slate-100">
@@ -81,7 +100,7 @@ export default function Orders() {
           {shown.length === 0 && <Empty icon={ClipboardList} title="No orders found" text="Try another filter or create a new order" />}
         </div>
         <div className="flex items-center justify-between border-t border-slate-100 p-4 text-sm">
-          <span className="text-slate-500">{list.length} orders · page {page + 1} of {pages}</span>
+          <span className="text-slate-500">{list.length} orders · {page + 1}/{pages}</span>
           <div className="flex gap-2">
             <button disabled={page === 0} onClick={() => setPage(page - 1)} className="btn-ghost px-3 py-2"><ChevronLeft className="h-4 w-4" /></button>
             <button disabled={page >= pages - 1} onClick={() => setPage(page + 1)} className="btn-ghost px-3 py-2"><ChevronRight className="h-4 w-4" /></button>
@@ -118,14 +137,14 @@ function OrderDetail({ order, onClose }) {
               <div key={s} className="relative flex flex-1 flex-col items-center text-center">
                 {i > 0 && <div className={`absolute right-1/2 top-4 h-1 w-full -translate-y-1/2 ${i <= idx ? 'bg-brand-600' : 'bg-slate-200'}`} />}
                 <div className={`relative z-10 grid h-8 w-8 place-items-center rounded-full text-xs font-bold ${i <= idx ? 'bg-brand-600 text-white' : 'bg-slate-100 text-slate-400'}`}>{i < idx ? <Check className="h-4 w-4" /> : i + 1}</div>
-                <p className={`mt-1.5 text-[11px] font-semibold ${i <= idx ? 'text-ink-900' : 'text-slate-400'}`}>{STATUS_LABEL[s]}</p>
+                <p className={`mt-1.5 text-[10px] font-semibold leading-tight sm:text-[11px] ${i <= idx ? 'text-ink-900' : 'text-slate-400'}`}>{STATUS_LABEL[s]}</p>
               </div>
             ))}
           </div>
         )}
 
-        <div className="grid gap-3 rounded-2xl bg-slate-50 p-4 text-sm sm:grid-cols-4">
-          <div className="sm:col-span-2"><p className="text-xs text-slate-500">{isSales ? 'Customer' : 'Supplier'}</p><p className="font-semibold">{party?.name || '—'}</p><p className="text-xs text-slate-500">{party?.city} · {party?.phone}</p></div>
+        <div className="grid grid-cols-2 gap-3 rounded-2xl bg-slate-50 p-4 text-sm sm:grid-cols-4">
+          <div className="col-span-2"><p className="text-xs text-slate-500">{isSales ? 'Customer' : 'Supplier'}</p><p className="font-semibold">{party?.name || '—'}</p><p className="text-xs text-slate-500">{party?.city} · {party?.phone}</p></div>
           <div><p className="text-xs text-slate-500">Order date</p><p className="font-semibold">{fmtDate(order.createdAt)}</p></div>
           <div><p className="text-xs text-slate-500">Due date</p><p className="font-semibold">{fmtDate(order.dueDate)}</p></div>
         </div>
@@ -153,8 +172,8 @@ function OrderDetail({ order, onClose }) {
 
         {order.status !== 'cancelled' && (
           <div className="flex flex-wrap gap-2 border-t border-slate-100 pt-4">
-            {next && <button disabled={shortages.length > 0} onClick={() => setStatus(next)} className="btn-primary flex-1"><Check className="h-4 w-4" />Mark as {STATUS_LABEL[next].toLowerCase()}</button>}
-            {!['delivered', 'received', 'dispatched'].includes(order.status) && <button onClick={() => setStatus('cancelled')} className="btn-danger"><X className="h-4 w-4" />Cancel order</button>}
+            {next && <button disabled={shortages.length > 0} onClick={() => setStatus(next)} className="btn-primary w-full sm:w-auto sm:flex-1"><Check className="h-4 w-4" />Mark as {STATUS_LABEL[next].toLowerCase()}</button>}
+            {!['delivered', 'received', 'dispatched'].includes(order.status) && <button onClick={() => setStatus('cancelled')} className="btn-danger w-full sm:w-auto"><X className="h-4 w-4" />Cancel order</button>}
           </div>
         )}
         <p className="text-center text-xs text-slate-500">{isSales ? 'Dispatching deducts finished goods from stock.' : 'Receiving adds the materials to stock.'} Every change is recorded in History.</p>

@@ -34,7 +34,7 @@ export default function Dashboard() {
   })
   const prodMap = {}
   history.filter((h) => h.kind === 'production' && h.at >= now - 30 * DAY).forEach((h) => { prodMap[h.item] = (prodMap[h.item] || 0) + h.qty })
-  const production = Object.entries(prodMap).map(([name, qty]) => ({ name: name.replace(/ \d+L$/, ''), qty })).sort((a, b) => b.qty - a.qty).filter((x) => !/Bottle/.test(x.name)).slice(0, 7)
+  const production = Object.entries(prodMap).map(([name, qty]) => ({ name: name.replace(/\s\d+(g|kg|ml|L)$/, ''), qty })).sort((a, b) => b.qty - a.qty).slice(0, 8)
   const statusData = ['pending', 'in_production', 'ready', 'dispatched'].map((k) => ({ name: STATUS_LABEL[k], value: orders.filter((o) => o.type === 'sales' && o.status === k).length })).filter((x) => x.value)
   const due = open.slice().sort((a, b) => a.dueDate - b.dueDate).slice(0, 5)
   const greet = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening'
@@ -49,28 +49,28 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <PageHead title={`${greet}, ${state.session.name.split(' ')[0]} 👋`} sub={`Here's what's happening at ${state.settings.companyName} today.`}>
-        <Link to="/products" className="btn-ghost"><Hammer className="h-4 w-4" />Record production</Link>
+        <Link to="/products" className="btn-ghost"><Hammer className="h-4 w-4" /><span className="sm:hidden">Produce</span><span className="hidden sm:inline">Record production</span></Link>
         <Link to="/orders?new=sales" className="btn-primary"><Plus className="h-4 w-4" />New order</Link>
       </PageHead>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {kpis.map((k) => {
           const Inner = (
             <>
               <div className={`absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br ${k.grad} opacity-10`} />
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-slate-500">{k.label}</p>
-                <span className={`grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br ${k.grad} text-white shadow-lg`}><k.icon className="h-5 w-5" /></span>
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-xs font-medium text-slate-500 sm:text-sm">{k.label}</p>
+                <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br sm:h-10 sm:w-10 sm:rounded-xl ${k.grad} text-white shadow-lg`}><k.icon className="h-4 w-4 sm:h-5 sm:w-5" /></span>
               </div>
-              <p className={`mt-3 font-display text-3xl font-extrabold ${k.warn ? 'text-amber-600' : 'text-ink-900'}`}>{k.value}</p>
+              <p className={`mt-2 truncate font-display text-lg font-extrabold sm:mt-3 sm:text-3xl ${k.warn ? 'text-amber-600' : 'text-ink-900'}`}>{k.value}</p>
               {k.change !== undefined ? (
-                <p className={`mt-1 flex items-center gap-1 text-xs font-semibold ${k.change >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                  {k.change >= 0 ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}{Math.abs(k.change).toFixed(1)}% <span className="font-normal text-slate-400">vs same period last month</span>
+                <p className={`mt-1 flex items-center gap-1 text-[11px] font-semibold sm:text-xs ${k.change >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                  {k.change >= 0 ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}{Math.abs(k.change).toFixed(1)}% <span className="hidden font-normal text-slate-400 sm:inline">vs same period last month</span><span className="font-normal text-slate-400 sm:hidden">vs last mo.</span>
                 </p>
-              ) : <p className="mt-1 text-xs text-slate-500">{k.sub}</p>}
+              ) : <p className="mt-1 truncate text-[11px] text-slate-500 sm:text-xs">{k.sub}</p>}
             </>
           )
-          return k.to ? <Link key={k.label} to={k.to} className="card relative overflow-hidden p-5 transition hover:-translate-y-0.5 hover:shadow-lg">{Inner}</Link> : <div key={k.label} className="card relative overflow-hidden p-5">{Inner}</div>
+          return k.to ? <Link key={k.label} to={k.to} className="card relative overflow-hidden p-4 transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5">{Inner}</Link> : <div key={k.label} className="card relative overflow-hidden p-4 sm:p-5">{Inner}</div>
         })}
       </div>
 
@@ -80,7 +80,7 @@ export default function Dashboard() {
             <div><h3 className="font-bold text-ink-900">Sales</h3><p className="text-sm text-slate-500">Last 30 days</p></div>
             <p className="font-display text-xl font-extrabold">{money(series.reduce((s, d) => s + d.sales, 0))}</p>
           </div>
-          <div className="mt-4 h-64">
+          <div className="mt-4 h-52 sm:h-64">
             <ResponsiveContainer>
               <AreaChart data={series} margin={{ left: -6, right: 8 }}>
                 <defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#3b6cf6" stopOpacity={0.35} /><stop offset="1" stopColor="#3b6cf6" stopOpacity={0} /></linearGradient></defs>
@@ -112,7 +112,7 @@ export default function Dashboard() {
             <div><h3 className="font-bold text-ink-900">Production output</h3><p className="text-sm text-slate-500">Units produced, last 30 days · {fmtQty(producedMonth)} units this month</p></div>
             <Link to="/products" className="text-sm font-semibold text-brand-600">Produce</Link>
           </div>
-          <div className="mt-4 h-56">
+          <div className="mt-4 h-48 sm:h-56">
             <ResponsiveContainer>
               <BarChart data={production} margin={{ left: -16 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef2f7" />
@@ -148,9 +148,8 @@ export default function Dashboard() {
               const late = o.dueDate < now
               return (
                 <Link to={`/orders?open=${o.id}`} key={o.id} className="flex items-center gap-3 py-3 hover:bg-slate-50">
-                  <div className="min-w-0 flex-1"><p className="font-semibold">{o.number} <span className="font-normal text-slate-500">· {customers.find((c) => c.id === o.party)?.name}</span></p><p className={`text-xs ${late ? 'font-semibold text-rose-600' : 'text-slate-500'}`}>{late ? 'Overdue · ' : 'Due '}{fmtDate(o.dueDate)}</p></div>
-                  <span className="text-sm font-semibold">{money(o.total)}</span>
-                  <StatusBadge status={o.status} />
+                  <div className="min-w-0 flex-1"><p className="truncate font-semibold">{o.number} <span className="font-normal text-slate-500">· {customers.find((c) => c.id === o.party)?.name}</span></p><p className={`text-xs ${late ? 'font-semibold text-rose-600' : 'text-slate-500'}`}>{late ? 'Overdue · ' : 'Due '}{fmtDate(o.dueDate)}</p></div>
+                  <div className="flex shrink-0 flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-3"><span className="text-sm font-semibold">{money(o.total)}</span><StatusBadge status={o.status} /></div>
                 </Link>
               )
             })}

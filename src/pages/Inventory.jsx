@@ -4,7 +4,7 @@ import { Plus, Search, Download, ArrowDownToLine, ArrowUpFromLine, Pencil, Trash
 import { useStore, useMoney, fmtQty, productCost, toCSV, download } from '../lib/store'
 import { PageHead, Tabs, StockBadge, Modal, Field, ConfirmButton, Empty, toast } from '../components/ui'
 
-const BLANK = { sku: '', name: '', category: 'Resin', unit: 'kg', qty: 0, min: 0, cost: 0, supplier: '', location: '' }
+const BLANK = { sku: '', name: '', category: 'Grains & Flour', unit: 'kg', qty: 0, min: 0, cost: 0, supplier: '', location: '' }
 
 export default function Inventory() {
   const { state, dispatch } = useStore()
@@ -40,11 +40,11 @@ export default function Inventory() {
         {isRaw && <button onClick={() => setEdit({ ...BLANK, supplier: state.suppliers[0]?.id || '' })} className="btn-primary"><Plus className="h-4 w-4" />Add material</button>}
       </PageHead>
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-3">
-        {[[isRaw ? Boxes : Package, isRaw ? 'Materials' : 'Products', source.length, 'from-brand-500 to-indigo-600'], [AlertTriangle, 'Below minimum', low, 'from-amber-500 to-orange-500'], [Wallet, 'Stock value', money(value), 'from-emerald-500 to-teal-500']].map(([Icon, l, v, gr]) => (
-          <div key={l} className="card flex items-center gap-4 p-5">
-            <span className={`grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br ${gr} text-white shadow-lg`}><Icon className="h-6 w-6" /></span>
-            <div><p className="text-sm text-slate-500">{l}</p><p className="font-display text-2xl font-extrabold text-ink-900">{v}</p></div>
+      <div className="mb-5 grid grid-cols-3 gap-2 sm:mb-6 sm:gap-4">
+        {[[isRaw ? Boxes : Package, isRaw ? 'Materials' : 'Products', source.length, 'from-brand-500 to-indigo-600'], [AlertTriangle, 'Below minimum', low, 'from-amber-500 to-orange-500'], [Wallet, 'Stock value', <><span className="sm:hidden">{state.settings.currency} {value >= 1e6 ? `${(value / 1e6).toFixed(2)}M` : `${Math.round(value / 1000)}k`}</span><span className="hidden sm:inline">{money(value)}</span></>, 'from-emerald-500 to-teal-500']].map(([Icon, l, v, gr]) => (
+          <div key={l} className="card flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-5">
+            <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br sm:h-12 sm:w-12 sm:rounded-2xl ${gr} text-white shadow-lg`}><Icon className="h-5 w-5 sm:h-6 sm:w-6" /></span>
+            <div className="min-w-0"><p className="truncate text-[11px] text-slate-500 sm:text-sm">{l}</p><p className="truncate font-display text-base font-extrabold text-ink-900 sm:text-2xl">{v}</p></div>
           </div>
         ))}
       </div>
@@ -60,10 +60,40 @@ export default function Inventory() {
             <option value="all">All categories</option>
             {cats.map((c) => <option key={c}>{c}</option>)}
           </select>
-          <label className="flex items-center gap-2 text-sm font-semibold text-slate-600"><input type="checkbox" checked={lowOnly} onChange={(e) => setLowOnly(e.target.checked)} className="h-4 w-4 accent-brand-600" />Low stock only</label>
+          <label className="flex items-center gap-2 whitespace-nowrap text-sm font-semibold text-slate-600"><input type="checkbox" checked={lowOnly} onChange={(e) => setLowOnly(e.target.checked)} className="h-4 w-4 accent-brand-600" />Low stock only</label>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Mobile cards */}
+        <div className="divide-y divide-slate-100 md:hidden">
+          {rows.map((i) => {
+            const ratio = Math.min(1, i.qty / Math.max(1, i.min * 2))
+            const isLow = i.qty < i.min
+            return (
+              <div key={i.id} className="p-4">
+                <div className="flex items-start gap-3">
+                  {!isRaw && <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-xl" style={{ background: i.bg }}>{i.emoji}</span>}
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-ink-900">{i.name}</p>
+                    <p className="truncate text-xs text-slate-500">{i.sku} · {i.category}{i.location ? ` · ${i.location}` : ''}</p>
+                  </div>
+                  <StockBadge qty={i.qty} min={i.min} />
+                </div>
+                <div className="mt-3 flex items-end justify-between gap-3">
+                  <div><p className="font-display text-xl font-extrabold text-ink-900">{fmtQty(i.qty)} <span className="text-sm font-semibold text-slate-500">{i.unit}</span></p><p className="text-xs text-slate-500">Min {fmtQty(i.min)} · {money(i.qty * i.cost)}</p></div>
+                  <div className="flex gap-1.5">
+                    <button onClick={() => setAdjust({ item: i, kind: isRaw ? 'material' : 'product', dir: 1 })} className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200" aria-label="Stock in"><ArrowDownToLine className="h-4 w-4" /></button>
+                    <button onClick={() => setAdjust({ item: i, kind: isRaw ? 'material' : 'product', dir: -1 })} className="grid h-10 w-10 place-items-center rounded-xl bg-rose-50 text-rose-700 ring-1 ring-rose-200" aria-label="Stock out"><ArrowUpFromLine className="h-4 w-4" /></button>
+                    {isRaw && <button onClick={() => setEdit(i)} className="grid h-10 w-10 place-items-center rounded-xl bg-white text-slate-600 ring-1 ring-slate-200" aria-label="Edit"><Pencil className="h-4 w-4" /></button>}
+                  </div>
+                </div>
+                <div className="mt-3 h-1.5 rounded-full bg-slate-100"><div className={`h-full rounded-full ${isLow ? 'bg-amber-500' : ratio < 0.7 ? 'bg-sky-400' : 'bg-emerald-500'}`} style={{ width: `${Math.max(3, ratio * 100)}%` }} /></div>
+              </div>
+            )
+          })}
+          {rows.length === 0 && <Empty icon={Boxes} title="No items found" text="Try a different search or filter" />}
+        </div>
+
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-sm">
             <thead className="bg-slate-50"><tr><th className="th">Item</th><th className="th">Category</th><th className="th">Level</th><th className="th text-right">In stock</th><th className="th text-right">Min</th><th className="th text-right">Unit cost</th><th className="th text-right">Value</th><th className="th">Status</th><th className="th text-right">Actions</th></tr></thead>
             <tbody className="divide-y divide-slate-100">
@@ -120,7 +150,7 @@ export default function Inventory() {
               <Field label="Minimum level"><input type="number" step="any" min="0" className="input" value={edit.min} onChange={(e) => setEdit({ ...edit, min: e.target.value })} /></Field>
               <Field label={`Unit cost (${state.settings.currency})`}><input type="number" step="any" min="0" className="input" value={edit.cost} onChange={(e) => setEdit({ ...edit, cost: e.target.value })} /></Field>
               <Field label="Supplier"><select className="input" value={edit.supplier} onChange={(e) => setEdit({ ...edit, supplier: e.target.value })}><option value="">—</option>{state.suppliers.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select></Field>
-              <Field label="Location" className="sm:col-span-2"><input className="input" value={edit.location} onChange={(e) => setEdit({ ...edit, location: e.target.value })} placeholder="e.g. Store A-1" /></Field>
+              <Field label="Location" className="sm:col-span-2"><input className="input" value={edit.location} onChange={(e) => setEdit({ ...edit, location: e.target.value })} placeholder="e.g. Dry store A-1" /></Field>
             </div>
             <button className="btn-primary w-full py-3">Save material</button>
           </form>

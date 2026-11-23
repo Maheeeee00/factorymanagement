@@ -27,6 +27,7 @@ export default function Layout() {
   const alerts = [...lowMaterials.map((m) => ({ id: m.id, text: `${m.name} is low`, sub: `${m.qty} ${m.unit} left (min ${m.min})`, to: '/inventory' })), ...lowProducts.map((p) => ({ id: p.id, text: `${p.name} stock low`, sub: `${p.qty} pcs left (min ${p.min})`, to: '/inventory?tab=finished' }))]
   const pendingOrders = state.orders.filter((o) => o.type === 'sales' && ['pending', 'in_production', 'ready'].includes(o.status)).length
   const user = state.session
+  const current = NAV.find(([, to]) => (to === '/' ? pathname === '/' : pathname.startsWith(to)))
 
   const Sidebar = (
     <div className="flex h-full flex-col bg-ink-900 text-slate-300">
@@ -64,20 +65,24 @@ export default function Layout() {
       )}
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur-xl sm:px-6">
-          <button className="lg:hidden" onClick={() => setOpen(true)}><Menu /></button>
+          <button className="-ml-1 rounded-lg p-1.5 text-slate-700 hover:bg-slate-100 lg:hidden" onClick={() => setOpen(true)} aria-label="Menu"><Menu /></button>
+          <div className="flex min-w-0 items-center gap-2 md:hidden">
+            <Logo iconOnly />
+            <div className="min-w-0 leading-tight"><p className="truncate font-display text-base font-extrabold text-ink-900">{current?.[0] || 'Factora'}</p><p className="truncate text-[11px] text-slate-500">{state.settings.companyName}</p></div>
+          </div>
           <form onSubmit={(e) => { e.preventDefault(); if (q.trim()) nav(`/history?q=${encodeURIComponent(q.trim())}`) }} className="relative hidden max-w-sm flex-1 md:block">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input value={q} onChange={(e) => setQ(e.target.value)} className="input bg-slate-50 pl-9" placeholder="Search history: order no., SKU, item…" />
           </form>
           <div className="ml-auto flex items-center gap-2">
-            <span className="hidden text-sm text-slate-500 sm:block">{new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+            <span className="hidden text-sm text-slate-500 lg:block">{new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}</span>
             <div className="relative">
               <button onClick={() => setBell(!bell)} className="relative rounded-xl p-2.5 text-slate-500 ring-1 ring-slate-200 hover:bg-slate-50">
                 <Bell className="h-4 w-4" />
                 {alerts.length > 0 && state.settings.lowStockAlerts && <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">{alerts.length}</span>}
               </button>
               {bell && (
-                <div className="absolute right-0 mt-2 w-80 animate-slideIn rounded-2xl bg-white p-2 shadow-2xl ring-1 ring-slate-200">
+                <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] max-w-xs animate-slideIn sm:w-80 rounded-2xl bg-white p-2 shadow-2xl ring-1 ring-slate-200">
                   <p className="px-3 py-2 font-bold">Stock alerts</p>
                   {(!alerts.length || !state.settings.lowStockAlerts) && <p className="px-3 py-6 text-center text-sm text-slate-500">All stock levels are healthy</p>}
                   {state.settings.lowStockAlerts && alerts.slice(0, 6).map((a) => (
@@ -92,8 +97,29 @@ export default function Layout() {
             </div>
           </div>
         </header>
-        <main className="flex-1 p-4 sm:p-6"><Outlet /></main>
+        <main className="flex-1 p-4 pb-28 sm:p-6 lg:pb-6"><Outlet /></main>
       </div>
+
+      {/* Mobile bottom navigation */}
+      <nav className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 backdrop-blur-xl lg:hidden">
+        <div className="grid grid-cols-5">
+          {NAV.slice(0, 5).map(([l, to, Icon]) => (
+            <NavLink key={to} to={to} end={to === '/'} className={({ isActive }) => `relative flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-semibold ${isActive ? 'text-brand-600' : 'text-slate-500'}`}>
+              {({ isActive }) => (
+                <>
+                  {isActive && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-brand-600" />}
+                  <span className="relative">
+                    <Icon className="h-5 w-5" />
+                    {l === 'Inventory' && alerts.length > 0 && <span className="absolute -right-2 -top-1 h-2 w-2 rounded-full bg-amber-500 ring-2 ring-white" />}
+                    {l === 'Orders' && pendingOrders > 0 && <span className="absolute -right-2.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-brand-600 px-1 text-[9px] text-white">{pendingOrders}</span>}
+                  </span>
+                  {l}
+                </>
+              )}
+            </NavLink>
+          ))}
+        </div>
+      </nav>
     </div>
   )
 }

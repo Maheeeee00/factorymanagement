@@ -3,7 +3,7 @@ import { Plus, Search, Hammer, Pencil, Trash2, Layers, X, CheckCircle2, AlertTri
 import { useStore, useMoney, fmtQty, productCost, maxProducible } from '../lib/store'
 import { PageHead, Modal, Field, ConfirmButton, StockBadge, Empty, toast } from '../components/ui'
 
-const EMOJIS = ['🪑', '🍽️', '🪣', '📦', '🗑️', '🧺', '🛢️', '🧴', '🧰', '🪴', '🧃', '🥤', '🛒', '🧱', '⚙️', '🔩']
+const EMOJIS = ['🍪', '🍫', '🍞', '🥐', '🎂', '🥔', '🥜', '🍿', '🥭', '🧃', '🥤', '🍅', '🍓', '🫙', '🧂', '🌶️']
 const BGS = ['linear-gradient(135deg,#bfdbfe,#2563eb)', 'linear-gradient(135deg,#e0e7ff,#4f46e5)', 'linear-gradient(135deg,#d1fae5,#059669)', 'linear-gradient(135deg,#fef3c7,#d97706)', 'linear-gradient(135deg,#fecaca,#dc2626)', 'linear-gradient(135deg,#e7e5e4,#57534e)', 'linear-gradient(135deg,#cffafe,#0891b2)']
 
 export default function Products() {
@@ -18,22 +18,22 @@ export default function Products() {
   return (
     <div>
       <PageHead title="Products" sub="Finished goods catalogue, bills of materials and production">
-        <button onClick={() => setEdit({ sku: '', name: '', category: state.productCategories[0], emoji: '📦', bg: BGS[0], price: '', qty: 0, min: 0, bom: [] })} className="btn-primary"><Plus className="h-4 w-4" />Add product</button>
+        <button onClick={() => setEdit({ sku: '', name: '', category: state.productCategories[0], emoji: '🍪', bg: BGS[0], price: '', qty: 0, min: 0, bom: [] })} className="btn-primary"><Plus className="h-4 w-4" />Add product</button>
       </PageHead>
 
       <div className="mb-5 flex flex-wrap items-center gap-3">
-        <div className="relative w-full max-w-xs">
+        <div className="relative w-full sm:max-w-xs">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input value={q} onChange={(e) => setQ(e.target.value)} className="input pl-9" placeholder="Search products" />
         </div>
-        <div className="scrollbar-thin flex gap-2 overflow-x-auto">
+        <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0">
           {['all', ...state.productCategories].map((c) => (
             <button key={c} onClick={() => setCat(c)} className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold ${cat === c ? 'bg-ink-900 text-white' : 'bg-white ring-1 ring-slate-200 hover:bg-slate-50'}`}>{c === 'all' ? 'All' : c}</button>
           ))}
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {items.map((p) => {
           const cost = productCost(p, state.materials)
           const margin = p.price ? ((p.price - cost) / p.price) * 100 : 0
@@ -153,12 +153,12 @@ function EditModal({ item, setItem }) {
             {item.bom.map((b, i) => {
               const m = state.materials.find((x) => x.id === b.m)
               return (
-                <div key={i} className="flex items-center gap-2">
-                  <select className="input flex-1" value={b.m} onChange={(e) => set('bom', item.bom.map((x, j) => (j === i ? { ...x, m: e.target.value } : x)))}>
+                <div key={i} className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
+                  <select className="input w-full sm:flex-1" value={b.m} onChange={(e) => set('bom', item.bom.map((x, j) => (j === i ? { ...x, m: e.target.value } : x)))}>
                     <option value="">Select material…</option>
                     {state.materials.map((mm) => <option key={mm.id} value={mm.id}>{mm.name} ({mm.unit})</option>)}
                   </select>
-                  <input type="number" step="any" min="0" placeholder="Qty" className="input w-28" value={b.q} onChange={(e) => set('bom', item.bom.map((x, j) => (j === i ? { ...x, q: e.target.value } : x)))} />
+                  <input type="number" step="any" min="0" placeholder="Qty" className="input flex-1 sm:w-28 sm:flex-none" value={b.q} onChange={(e) => set('bom', item.bom.map((x, j) => (j === i ? { ...x, q: e.target.value } : x)))} />
                   <span className="w-12 text-xs text-slate-500">{m?.unit}</span>
                   <button type="button" onClick={() => set('bom', item.bom.filter((_, j) => j !== i))} className="rounded-lg p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600"><X className="h-4 w-4" /></button>
                 </div>

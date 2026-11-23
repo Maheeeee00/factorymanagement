@@ -65,18 +65,18 @@ export function Empty({ icon: Icon, title, text }) {
 
 export function PageHead({ title, sub, children }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-      <div><h1 className="text-2xl font-extrabold text-ink-900 sm:text-3xl">{title}</h1>{sub && <p className="mt-1 text-slate-500">{sub}</p>}</div>
-      <div className="flex flex-wrap gap-2">{children}</div>
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3 sm:mb-6 sm:gap-4">
+      <div className="min-w-0"><h1 className="text-2xl font-extrabold text-ink-900 sm:text-3xl">{title}</h1>{sub && <p className="mt-1 text-sm text-slate-500 sm:text-base">{sub}</p>}</div>
+      {children && <div className="flex w-full flex-wrap gap-2 sm:w-auto [&>*]:flex-1 sm:[&>*]:flex-none">{children}</div>}
     </div>
   )
 }
 
 export function Tabs({ tabs, value, onChange }) {
   return (
-    <div className="inline-flex rounded-xl bg-white p-1 ring-1 ring-slate-200">
+    <div className="no-scrollbar flex w-full overflow-x-auto rounded-xl bg-white p-1 ring-1 ring-slate-200 sm:inline-flex sm:w-auto">
       {tabs.map(([k, l, count]) => (
-        <button key={k} onClick={() => onChange(k)} className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-sm font-semibold transition ${value === k ? 'bg-ink-900 text-white' : 'text-slate-600 hover:text-ink-900'}`}>
+        <button key={k} onClick={() => onChange(k)} className={`flex flex-1 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-1.5 text-sm font-semibold transition sm:flex-none ${value === k ? 'bg-ink-900 text-white' : 'text-slate-600 hover:text-ink-900'}`}>
           {l}{count !== undefined && <span className={`rounded-md px-1.5 text-xs ${value === k ? 'bg-white/20' : 'bg-slate-100'}`}>{count}</span>}
         </button>
       ))}
@@ -108,7 +108,7 @@ export function Toaster() {
     return () => { toastFn = null }
   }, [])
   return (
-    <div className="pointer-events-none fixed bottom-5 right-5 z-[60] space-y-2">
+    <div className="pointer-events-none fixed bottom-24 left-4 right-4 z-[60] flex flex-col items-center gap-2 sm:bottom-5 sm:left-auto sm:right-5 sm:items-end">
       {items.map((t) => <div key={t.id} className="animate-slideIn rounded-xl bg-ink-900 px-4 py-3 text-sm font-semibold text-white shadow-2xl">✓ {t.msg}</div>)}
     </div>
   )

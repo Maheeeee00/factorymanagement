@@ -11,9 +11,9 @@ export default function Settings() {
     <div>
       <PageHead title="Settings" sub="Company profile, contacts, users and data" />
       <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
-        <nav className="flex gap-1 overflow-x-auto lg:flex-col">
+        <nav className="grid grid-cols-2 gap-1.5 lg:flex lg:flex-col lg:gap-1">
           {SECTIONS.map(([k, l, Icon]) => (
-            <button key={k} onClick={() => setSec(k)} className={`flex shrink-0 items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm font-semibold transition ${sec === k ? 'bg-white text-brand-700 shadow-card ring-1 ring-slate-200' : 'text-slate-600 hover:bg-white/70'}`}><Icon className="h-4 w-4" />{l}</button>
+            <button key={k} onClick={() => setSec(k)} className={`flex items-center gap-2 rounded-xl px-3 py-2.5 text-left text-xs font-semibold transition sm:text-sm ${sec === k ? 'bg-white text-brand-700 shadow-card ring-1 ring-slate-200' : 'bg-white/50 text-slate-600 ring-1 ring-slate-200/60 hover:bg-white lg:bg-transparent lg:ring-0'}`}><Icon className="h-4 w-4" />{l}</button>
           ))}
         </nav>
         <div className="min-w-0">
@@ -28,8 +28,8 @@ export default function Settings() {
 }
 
 const Card = ({ icon: Icon, title, sub, children, action }) => (
-  <div className="card mb-5 p-6">
-    <div className="mb-5 flex items-center gap-3">
+  <div className="card mb-5 p-4 sm:p-6">
+    <div className="mb-5 flex flex-wrap items-center gap-3">
       <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-600"><Icon className="h-5 w-5" /></span>
       <div className="flex-1"><h3 className="font-bold text-ink-900">{title}</h3>{sub && <p className="text-sm text-slate-500">{sub}</p>}</div>
       {action}
@@ -55,7 +55,7 @@ function Company() {
         </div>
       </Card>
       <Card icon={Receipt} title="Orders, tax & currency">
-        <div className="grid gap-4 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Field label="Currency"><select className="input" value={f.currency} onChange={set('currency')}>{['Rs', '$', 'AED', '€', '£', 'SAR', '₹'].map((c) => <option key={c}>{c}</option>)}</select></Field>
           <Field label="Sales tax (%)"><input type="number" min="0" className="input" value={f.taxRate} onChange={set('taxRate')} /></Field>
           <Field label="Sales order prefix"><input className="input" value={f.orderPrefix} onChange={set('orderPrefix')} /></Field>
@@ -68,7 +68,7 @@ function Company() {
           <Toggle on={f.lowStockAlerts} onChange={(v) => setF({ ...f, lowStockAlerts: v })} />
         </div>
       </Card>
-      <div className="flex justify-end"><button onClick={save} className="btn-primary"><Save className="h-4 w-4" />Save changes</button></div>
+      <div className="flex justify-end"><button onClick={save} className="btn-primary w-full sm:w-auto"><Save className="h-4 w-4" />Save changes</button></div>
     </>
   )
 }

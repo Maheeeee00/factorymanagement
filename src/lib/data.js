@@ -1,11 +1,11 @@
 // Demo seed data for Factora. Everything can be edited in the app (Settings → Reset restores this).
 
 export const DEFAULT_SETTINGS = {
-  companyName: 'Crescent Plastics Ltd.',
-  tagline: 'Injection moulded household & industrial plastics',
-  address: 'Plot 24, Industrial Estate, Lahore',
+  companyName: 'Golden Harvest Foods Ltd.',
+  tagline: 'Bakery, snacks, beverages & sauces',
+  address: 'Plot 12, Industrial Estate, Lahore',
   phone: '+92 42 0000000',
-  email: 'info@crescentplastics.example',
+  email: 'info@goldenharvest.example',
   currency: 'Rs',
   taxRate: 17,
   lowStockAlerts: true,
@@ -13,35 +13,40 @@ export const DEFAULT_SETTINGS = {
   purchasePrefix: 'PO',
 }
 
-export const MATERIAL_CATEGORIES = ['Resin', 'Colour', 'Components', 'Packaging', 'Consumables']
-export const PRODUCT_CATEGORIES = ['Furniture', 'Household', 'Industrial', 'Bottles & Cans']
+export const MATERIAL_CATEGORIES = ['Grains & Flour', 'Sweeteners', 'Oils & Dairy', 'Fruits & Vegetables', 'Spices & Salt', 'Packaging']
+export const PRODUCT_CATEGORIES = ['Bakery', 'Snacks', 'Beverages', 'Sauces & Spreads']
 
 export const MATERIALS = [
-  { id: 'rm1', sku: 'RM-PP-01', name: 'PP granules', category: 'Resin', unit: 'kg', qty: 1850, min: 800, cost: 380, supplier: 'sp1', location: 'Store A-1' },
-  { id: 'rm2', sku: 'RM-HD-01', name: 'HDPE granules', category: 'Resin', unit: 'kg', qty: 620, min: 700, cost: 360, supplier: 'sp1', location: 'Store A-2' },
-  { id: 'rm3', sku: 'RM-PET-01', name: 'PET resin', category: 'Resin', unit: 'kg', qty: 410, min: 200, cost: 420, supplier: 'sp1', location: 'Store A-3' },
-  { id: 'rm4', sku: 'RM-MB-BL', name: 'Masterbatch – Blue', category: 'Colour', unit: 'kg', qty: 74, min: 40, cost: 900, supplier: 'sp2', location: 'Store B-1' },
-  { id: 'rm5', sku: 'RM-MB-WH', name: 'Masterbatch – White', category: 'Colour', unit: 'kg', qty: 28, min: 40, cost: 850, supplier: 'sp2', location: 'Store B-1' },
-  { id: 'rm6', sku: 'RM-HND-01', name: 'Steel bucket handles', category: 'Components', unit: 'pcs', qty: 2400, min: 1000, cost: 35, supplier: 'sp4', location: 'Store C-2' },
-  { id: 'rm7', sku: 'RM-CAP-01', name: 'Screw caps', category: 'Components', unit: 'pcs', qty: 9200, min: 5000, cost: 6, supplier: 'sp4', location: 'Store C-3' },
-  { id: 'rm8', sku: 'RM-LBL-01', name: 'Printed labels', category: 'Packaging', unit: 'pcs', qty: 3100, min: 4000, cost: 2, supplier: 'sp3', location: 'Store D-1' },
-  { id: 'rm9', sku: 'RM-CTN-01', name: 'Corrugated cartons', category: 'Packaging', unit: 'pcs', qty: 640, min: 300, cost: 85, supplier: 'sp3', location: 'Store D-2' },
-  { id: 'rm10', sku: 'RM-FLM-01', name: 'Stretch film roll', category: 'Packaging', unit: 'rolls', qty: 18, min: 10, cost: 1800, supplier: 'sp3', location: 'Store D-3' },
-  { id: 'rm11', sku: 'RM-MRS-01', name: 'Mould release spray', category: 'Consumables', unit: 'cans', qty: 9, min: 12, cost: 650, supplier: 'sp4', location: 'Maintenance' },
-  { id: 'rm12', sku: 'RM-TPE-01', name: 'Packing tape', category: 'Consumables', unit: 'rolls', qty: 140, min: 60, cost: 120, supplier: 'sp3', location: 'Store D-3' },
+  { id: 'rm1', sku: 'RM-FLR-01', name: 'Wheat flour', category: 'Grains & Flour', unit: 'kg', qty: 2400, min: 1000, cost: 110, supplier: 'sp1', location: 'Dry store A-1' },
+  { id: 'rm2', sku: 'RM-BSN-01', name: 'Gram flour (besan)', category: 'Grains & Flour', unit: 'kg', qty: 380, min: 300, cost: 260, supplier: 'sp1', location: 'Dry store A-2' },
+  { id: 'rm3', sku: 'RM-SUG-01', name: 'Sugar', category: 'Sweeteners', unit: 'kg', qty: 1500, min: 800, cost: 150, supplier: 'sp2', location: 'Dry store A-3' },
+  { id: 'rm4', sku: 'RM-OIL-01', name: 'Cooking oil', category: 'Oils & Dairy', unit: 'L', qty: 420, min: 500, cost: 520, supplier: 'sp4', location: 'Oil tank 1' },
+  { id: 'rm5', sku: 'RM-BTR-01', name: 'Butter', category: 'Oils & Dairy', unit: 'kg', qty: 160, min: 100, cost: 1800, supplier: 'sp4', location: 'Cold room C-1' },
+  { id: 'rm6', sku: 'RM-MLK-01', name: 'Milk powder', category: 'Oils & Dairy', unit: 'kg', qty: 85, min: 120, cost: 1400, supplier: 'sp4', location: 'Dry store B-1' },
+  { id: 'rm7', sku: 'RM-POT-01', name: 'Potatoes', category: 'Fruits & Vegetables', unit: 'kg', qty: 900, min: 600, cost: 90, supplier: 'sp3', location: 'Cold room C-2' },
+  { id: 'rm8', sku: 'RM-TOM-01', name: 'Tomato paste', category: 'Fruits & Vegetables', unit: 'kg', qty: 260, min: 150, cost: 450, supplier: 'sp3', location: 'Cold room C-3' },
+  { id: 'rm9', sku: 'RM-MNG-01', name: 'Mango pulp', category: 'Fruits & Vegetables', unit: 'kg', qty: 340, min: 200, cost: 380, supplier: 'sp3', location: 'Cold room C-3' },
+  { id: 'rm10', sku: 'RM-FRT-01', name: 'Mixed fruit pulp', category: 'Fruits & Vegetables', unit: 'kg', qty: 140, min: 150, cost: 420, supplier: 'sp3', location: 'Cold room C-3' },
+  { id: 'rm11', sku: 'RM-SLT-01', name: 'Salt', category: 'Spices & Salt', unit: 'kg', qty: 300, min: 100, cost: 60, supplier: 'sp6', location: 'Dry store B-2' },
+  { id: 'rm12', sku: 'RM-SPC-01', name: 'Spice mix', category: 'Spices & Salt', unit: 'kg', qty: 48, min: 30, cost: 1600, supplier: 'sp6', location: 'Dry store B-2' },
+  { id: 'rm13', sku: 'PK-PCH-01', name: 'Snack pouches', category: 'Packaging', unit: 'pcs', qty: 18000, min: 10000, cost: 6, supplier: 'sp5', location: 'Pack store D-1' },
+  { id: 'rm14', sku: 'PK-BTL-01', name: 'PET bottles', category: 'Packaging', unit: 'pcs', qty: 2600, min: 2000, cost: 28, supplier: 'sp5', location: 'Pack store D-2' },
+  { id: 'rm15', sku: 'PK-JAR-01', name: 'Glass jars', category: 'Packaging', unit: 'pcs', qty: 1100, min: 1500, cost: 45, supplier: 'sp5', location: 'Pack store D-2' },
+  { id: 'rm16', sku: 'PK-LBL-01', name: 'Printed labels', category: 'Packaging', unit: 'pcs', qty: 9000, min: 5000, cost: 2, supplier: 'sp5', location: 'Pack store D-3' },
+  { id: 'rm17', sku: 'PK-CTN-01', name: 'Shipping cartons', category: 'Packaging', unit: 'pcs', qty: 700, min: 300, cost: 85, supplier: 'sp5', location: 'Pack store D-3' },
 ]
 
 const g = (a, b) => `linear-gradient(135deg, ${a}, ${b})`
 
 export const PRODUCTS = [
-  { id: 'p1', sku: 'FG-CHR-01', name: 'Classic Chair', category: 'Furniture', emoji: '🪑', bg: g('#bfdbfe', '#2563eb'), price: 1450, qty: 420, min: 150, bom: [{ m: 'rm1', q: 2.2 }, { m: 'rm4', q: 0.05 }, { m: 'rm9', q: 0.25 }] },
-  { id: 'p2', sku: 'FG-TBL-01', name: 'Dining Table', category: 'Furniture', emoji: '🍽️', bg: g('#e0e7ff', '#4f46e5'), price: 3800, qty: 64, min: 40, bom: [{ m: 'rm1', q: 4.5 }, { m: 'rm5', q: 0.08 }, { m: 'rm9', q: 1 }] },
-  { id: 'p3', sku: 'FG-BKT-20', name: 'Bucket 20L', category: 'Household', emoji: '🪣', bg: g('#bae6fd', '#0284c7'), price: 650, qty: 880, min: 300, bom: [{ m: 'rm2', q: 0.9 }, { m: 'rm6', q: 1 }, { m: 'rm4', q: 0.02 }, { m: 'rm8', q: 1 }] },
-  { id: 'p4', sku: 'FG-BOX-30', name: 'Storage Box 30L', category: 'Household', emoji: '📦', bg: g('#fef3c7', '#d97706'), price: 980, qty: 210, min: 120, bom: [{ m: 'rm1', q: 1.4 }, { m: 'rm5', q: 0.03 }, { m: 'rm8', q: 1 }] },
-  { id: 'p5', sku: 'FG-DST-40', name: 'Dustbin 40L', category: 'Household', emoji: '🗑️', bg: g('#d1fae5', '#059669'), price: 1350, qty: 96, min: 100, bom: [{ m: 'rm2', q: 1.6 }, { m: 'rm4', q: 0.03 }, { m: 'rm8', q: 1 }] },
-  { id: 'p6', sku: 'FG-CRT-01', name: 'Industrial Crate', category: 'Industrial', emoji: '🧺', bg: g('#fecaca', '#dc2626'), price: 1200, qty: 350, min: 200, bom: [{ m: 'rm2', q: 1.8 }, { m: 'rm4', q: 0.03 }] },
-  { id: 'p7', sku: 'FG-JRC-20', name: 'Jerry Can 20L', category: 'Bottles & Cans', emoji: '🛢️', bg: g('#e7e5e4', '#57534e'), price: 720, qty: 540, min: 250, bom: [{ m: 'rm2', q: 1.1 }, { m: 'rm7', q: 1 }, { m: 'rm8', q: 1 }] },
-  { id: 'p8', sku: 'FG-BTL-01', name: 'Water Bottle 1L', category: 'Bottles & Cans', emoji: '🧴', bg: g('#cffafe', '#0891b2'), price: 90, qty: 6200, min: 3000, bom: [{ m: 'rm3', q: 0.04 }, { m: 'rm7', q: 1 }, { m: 'rm8', q: 1 }] },
+  { id: 'p1', sku: 'FG-CKE-200', name: 'Butter Cookies 200g', category: 'Bakery', emoji: '🍪', bg: g('#fef3c7', '#d97706'), price: 220, qty: 1800, min: 800, bom: [{ m: 'rm1', q: 0.1 }, { m: 'rm3', q: 0.04 }, { m: 'rm5', q: 0.03 }, { m: 'rm13', q: 1 }, { m: 'rm17', q: 0.04 }] },
+  { id: 'p2', sku: 'FG-CHB-150', name: 'Chocolate Biscuits 150g', category: 'Bakery', emoji: '🍫', bg: g('#e7e5e4', '#78350f'), price: 180, qty: 2400, min: 1000, bom: [{ m: 'rm1', q: 0.08 }, { m: 'rm3', q: 0.04 }, { m: 'rm6', q: 0.01 }, { m: 'rm5', q: 0.01 }, { m: 'rm13', q: 1 }] },
+  { id: 'p3', sku: 'FG-BRD-01', name: 'Sandwich Bread', category: 'Bakery', emoji: '🍞', bg: g('#ffedd5', '#c2410c'), price: 160, qty: 320, min: 400, bom: [{ m: 'rm1', q: 0.4 }, { m: 'rm3', q: 0.02 }, { m: 'rm4', q: 0.02 }, { m: 'rm11', q: 0.005 }, { m: 'rm13', q: 1 }] },
+  { id: 'p4', sku: 'FG-CHP-50', name: 'Potato Chips 50g', category: 'Snacks', emoji: '🥔', bg: g('#fef08a', '#ca8a04'), price: 70, qty: 5200, min: 2000, bom: [{ m: 'rm7', q: 0.2 }, { m: 'rm4', q: 0.02 }, { m: 'rm12', q: 0.002 }, { m: 'rm11', q: 0.001 }, { m: 'rm13', q: 1 }] },
+  { id: 'p5', sku: 'FG-NMK-200', name: 'Nimko Mix 200g', category: 'Snacks', emoji: '🥜', bg: g('#fde68a', '#b45309'), price: 150, qty: 1100, min: 600, bom: [{ m: 'rm2', q: 0.1 }, { m: 'rm4', q: 0.03 }, { m: 'rm12', q: 0.01 }, { m: 'rm11', q: 0.003 }, { m: 'rm13', q: 1 }] },
+  { id: 'p6', sku: 'FG-MJC-1L', name: 'Mango Juice 1L', category: 'Beverages', emoji: '🥭', bg: g('#fed7aa', '#ea580c'), price: 260, qty: 1500, min: 800, bom: [{ m: 'rm9', q: 0.35 }, { m: 'rm3', q: 0.08 }, { m: 'rm14', q: 1 }, { m: 'rm16', q: 1 }] },
+  { id: 'p7', sku: 'FG-KTC-500', name: 'Tomato Ketchup 500g', category: 'Sauces & Spreads', emoji: '🍅', bg: g('#fecaca', '#dc2626'), price: 290, qty: 900, min: 500, bom: [{ m: 'rm8', q: 0.3 }, { m: 'rm3', q: 0.06 }, { m: 'rm11', q: 0.01 }, { m: 'rm12', q: 0.005 }, { m: 'rm14', q: 1 }, { m: 'rm16', q: 1 }] },
+  { id: 'p8', sku: 'FG-JAM-440', name: 'Mixed Fruit Jam 440g', category: 'Sauces & Spreads', emoji: '🍓', bg: g('#fbcfe8', '#be185d'), price: 380, qty: 380, min: 300, bom: [{ m: 'rm10', q: 0.25 }, { m: 'rm3', q: 0.2 }, { m: 'rm15', q: 1 }, { m: 'rm16', q: 1 }] },
 ]
 
 export const CUSTOMERS = [
@@ -54,10 +59,12 @@ export const CUSTOMERS = [
 ]
 
 export const SUPPLIERS = [
-  { id: 'sp1', name: 'Polymer Supply Co.', city: 'Karachi', phone: '021-1112222' },
-  { id: 'sp2', name: 'ColorTech Masterbatch', city: 'Lahore', phone: '042-3334444' },
-  { id: 'sp3', name: 'PackRight Cartons', city: 'Lahore', phone: '042-5556666' },
-  { id: 'sp4', name: 'Allied Components', city: 'Sialkot', phone: '052-7778888' },
+  { id: 'sp1', name: 'Punjab Flour Mills', city: 'Lahore', phone: '042-1112222' },
+  { id: 'sp2', name: 'Sweet Valley Sugar', city: 'Faisalabad', phone: '041-3334444' },
+  { id: 'sp3', name: 'Agro Fresh Produce', city: 'Multan', phone: '061-5556666' },
+  { id: 'sp4', name: 'Dairy & Oils Co.', city: 'Karachi', phone: '021-7778888' },
+  { id: 'sp5', name: 'PackRight Packaging', city: 'Lahore', phone: '042-9990000' },
+  { id: 'sp6', name: 'SpiceHouse Traders', city: 'Karachi', phone: '021-2223333' },
 ]
 
 export const USERS = [
@@ -87,7 +94,7 @@ export function buildSeed() {
     for (let i = 0; i < n; i++) {
       const p = PRODUCTS[Math.floor(r() * PRODUCTS.length)]
       if (items.find((x) => x.id === p.id)) continue
-      const qty = p.id === 'p8' ? 200 + Math.floor(r() * 10) * 100 : 10 + Math.floor(r() * 12) * 5
+      const qty = 100 + Math.floor(r() * 18) * 50
       items.push({ id: p.id, name: p.name, qty, price: p.price })
     }
     const age = d
@@ -109,7 +116,7 @@ export function buildSeed() {
     const created = now - d * DAY
     const sp = SUPPLIERS[Math.floor(r() * SUPPLIERS.length)]
     const mats = MATERIALS.filter((m) => m.supplier === sp.id)
-    const items = mats.slice(0, 1 + Math.floor(r() * Math.min(3, mats.length))).map((m) => ({ id: m.id, name: m.name, qty: m.unit === 'kg' ? 250 + Math.floor(r() * 6) * 50 : m.unit === 'pcs' ? 1000 + Math.floor(r() * 5) * 500 : 10 + Math.floor(r() * 4) * 5, price: m.cost }))
+    const items = mats.slice(0, 1 + Math.floor(r() * Math.min(3, mats.length))).map((m) => ({ id: m.id, name: m.name, qty: m.unit === 'kg' || m.unit === 'L' ? (m.cost > 1000 ? 25 + Math.floor(r() * 4) * 25 : 200 + Math.floor(r() * 7) * 50) : 1000 + Math.floor(r() * 6) * 500, price: m.cost }))
     const status = d > 6 ? 'received' : d > 2 ? 'ordered' : 'draft'
     const subtotal = items.reduce((s, i) => s + i.qty * i.price, 0)
     const tax = Math.round(subtotal * 0.17)
@@ -123,7 +130,7 @@ export function buildSeed() {
   // production runs
   for (let d = 58; d >= 0; d -= 1 + Math.floor(r() * 3)) {
     const p = PRODUCTS[Math.floor(r() * PRODUCTS.length)]
-    const qty = p.id === 'p8' ? 1000 + Math.floor(r() * 5) * 500 : 50 + Math.floor(r() * 6) * 25
+    const qty = 500 + Math.floor(r() * 8) * 250
     const at = now - d * DAY + 10 * 3600000
     log({ at, kind: 'production', action: 'Production completed', ref: `BATCH-${String(9000 + h).slice(-4)}`, item: p.name, qty, detail: `Materials consumed per BOM`, user: 'Bilal Khan' })
   }

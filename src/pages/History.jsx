@@ -53,22 +53,22 @@ export default function History() {
         <button onClick={exportCsv} className="btn-ghost"><Download className="h-4 w-4" />Export CSV</button>
       </PageHead>
 
-      <div className="mb-5 grid gap-4 sm:grid-cols-4">
+      <div className="mb-5 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-4">
         {[['Entries', list.length, 'text-ink-900'], ['Stock-in movements', stats.in, 'text-emerald-600'], ['Stock-out movements', stats.out, 'text-rose-600'], ['Units produced', fmtQty(stats.prod), 'text-amber-600']].map(([l, v, c]) => (
-          <div key={l} className="card p-4"><p className="text-xs font-medium text-slate-500">{l}</p><p className={`mt-1 font-display text-2xl font-extrabold ${c}`}>{v}</p></div>
+          <div key={l} className="card p-3 sm:p-4"><p className="truncate text-[11px] font-medium text-slate-500 sm:text-xs">{l}</p><p className={`mt-1 font-display text-xl font-extrabold sm:text-2xl ${c}`}>{v}</p></div>
         ))}
       </div>
 
       <div className="card">
         <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 p-4">
-          <div className="relative min-w-[220px] flex-1">
+          <div className="relative w-full sm:w-auto sm:min-w-[220px] sm:flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input value={q} onChange={(e) => { setQ(e.target.value); setLimit(40) }} className="input pl-9" placeholder="Search order no., SKU, item, user…" />
           </div>
-          <select value={range} onChange={(e) => setRange(e.target.value)} className="input w-auto">{RANGES.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>
-          <select value={user} onChange={(e) => setUser(e.target.value)} className="input w-auto"><option value="all">All users</option>{users.map((u) => <option key={u}>{u}</option>)}</select>
+          <select value={range} onChange={(e) => setRange(e.target.value)} className="input flex-1 sm:w-auto sm:flex-none">{RANGES.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>
+          <select value={user} onChange={(e) => setUser(e.target.value)} className="input flex-1 sm:w-auto sm:flex-none"><option value="all">All users</option>{users.map((u) => <option key={u}>{u}</option>)}</select>
         </div>
-        <div className="scrollbar-thin flex gap-2 overflow-x-auto border-b border-slate-100 px-4 py-3">
+        <div className="no-scrollbar flex gap-2 overflow-x-auto border-b border-slate-100 px-4 py-3">
           {KINDS.map(([k, l]) => <button key={k} onClick={() => { setKind(k); setLimit(40) }} className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold ${kind === k ? 'bg-ink-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{l}</button>)}
         </div>
 
@@ -77,12 +77,12 @@ export default function History() {
           {groups.map((g) => (
             <div key={g.d} className="mb-6 last:mb-0">
               <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">{dayLabel(g.d)}</p>
-              <div className="relative space-y-1 border-l-2 border-slate-100 pl-6">
+              <div className="relative space-y-1 border-l-2 border-slate-100 pl-5 sm:pl-6">
                 {g.items.map((h) => {
                   const [Icon, cls] = KIND_ICON[h.kind] || KIND_ICON.edit
                   return (
-                    <div key={h.id} className="relative flex flex-wrap items-start gap-3 rounded-xl px-3 py-2.5 hover:bg-slate-50">
-                      <span className={`absolute -left-[42px] top-2.5 grid h-8 w-8 place-items-center rounded-lg ring-4 ring-white ${cls}`}><Icon className="h-4 w-4" /></span>
+                    <div key={h.id} className="relative flex flex-col gap-1 rounded-xl px-2 py-2.5 hover:bg-slate-50 sm:flex-row sm:items-start sm:gap-3 sm:px-3">
+                      <span className={`absolute -left-[37px] top-2.5 grid h-8 w-8 place-items-center rounded-lg ring-4 ring-white sm:-left-[42px] ${cls}`}><Icon className="h-4 w-4" /></span>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-ink-900">
                           {h.action}{h.item ? <span className="font-normal text-slate-600"> · {h.item}</span> : null}
@@ -90,7 +90,7 @@ export default function History() {
                         </p>
                         <p className="mt-0.5 text-xs text-slate-500">{h.detail}</p>
                       </div>
-                      <div className="text-right text-xs text-slate-500">
+                      <div className="flex flex-wrap gap-x-2 text-xs text-slate-500 sm:block sm:text-right">
                         <p className="font-mono font-semibold text-slate-700">{h.ref}</p>
                         <p>{h.user} · {new Date(h.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                       </div>

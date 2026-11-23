@@ -18,7 +18,7 @@ Built with **React 18 + Vite + Tailwind CSS + Recharts**. Demo data is stored in
 | **History** | Complete audit trail: stock in/out, production, orders and edits, filtered by type, date range and user, with search and CSV export |
 | **Settings** | Company profile, currency, tax, order prefixes, low-stock alerts, customers and suppliers, users and roles, **backup/restore (JSON)**, reset demo |
 
-The demo factory ("Crescent Plastics Ltd.") and all its data are fictional.
+The demo factory ("Golden Harvest Foods Ltd.": bakery, snacks, beverages and sauces) and all its data are fictional.
 
 ---
 
