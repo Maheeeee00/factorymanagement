@@ -19,24 +19,27 @@ export default function Login() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="relative hidden overflow-hidden bg-ink-900 p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-brand-500/30 blur-[120px]" />
-        <div className="absolute -bottom-40 -right-20 h-96 w-96 rounded-full bg-cyan-400/20 blur-[120px]" />
+        <div className="absolute -left-32 -top-32 h-[28rem] w-[28rem] rounded-full bg-brand-500/40 blur-[110px] animate-blob" />
+        <div className="absolute -bottom-40 -right-20 h-[28rem] w-[28rem] rounded-full bg-fuchsia-500/35 blur-[110px] animate-blob [animation-delay:-4s]" />
+        <div className="absolute left-1/3 top-1/2 h-72 w-72 rounded-full bg-amber-400/25 blur-[100px] animate-blob [animation-delay:-8s]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.04)_1px,transparent_1px)] bg-[size:48px_48px]" />
         <div className="relative"><Logo dark /></div>
         <div className="relative max-w-md">
-          <h1 className="text-4xl font-extrabold leading-tight">Run your whole factory from one dashboard.</h1>
+          <h1 className="animate-fadeUp text-4xl font-extrabold leading-tight">Run your whole factory <span className="bg-gradient-to-r from-amber-300 via-pink-400 to-violet-400 bg-clip-text text-transparent anim-gradient">from one dashboard.</span></h1>
           <p className="mt-4 text-slate-300">Track raw materials, plan production, manage orders and keep a full audit trail. Real time, from any device.</p>
-          <div className="mt-10 grid grid-cols-2 gap-3">
+          <div className="stagger mt-10 grid grid-cols-2 gap-3">
             {[[Gauge, 'Live dashboard'], [Boxes, 'Inventory & BOM'], [ClipboardList, 'Sales & purchase orders'], [History, 'Complete history']].map(([Icon, t]) => (
-              <div key={t} className="flex items-center gap-3 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10"><Icon className="h-5 w-5 text-brand-300" /><span className="text-sm font-semibold">{t}</span></div>
+              <div key={t} className="flex items-center gap-3 rounded-2xl bg-white/10 p-3 ring-1 ring-white/15 backdrop-blur transition hover:bg-white/15"><Icon className="h-5 w-5 text-brand-300" /><span className="text-sm font-semibold">{t}</span></div>
             ))}
           </div>
         </div>
         <p className="relative text-sm text-slate-500">© {new Date().getFullYear()} Factora</p>
       </div>
 
-      <div className="flex items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-sm">
+      <div className="relative flex items-center justify-center overflow-hidden p-6 sm:p-12">
+        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-violet-300/40 blur-3xl animate-blob lg:hidden" />
+        <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-300/40 blur-3xl animate-blob [animation-delay:-6s] lg:hidden" />
+        <div className="relative w-full max-w-sm animate-fadeUp">
           <div className="lg:hidden"><Logo /></div>
           <h2 className="mt-8 text-3xl font-extrabold text-ink-900 lg:mt-0">Welcome back</h2>
           <p className="mt-1 text-slate-500">Sign in to {state.settings.companyName}</p>
@@ -48,16 +51,16 @@ export default function Login() {
               <div className="relative"><Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" /><input type="password" className="input pl-9" value={password} onChange={(e) => { setPassword(e.target.value); setErr('') }} /></div>
             </label>
             {err && <p className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{err}</p>}
-            <button className="btn-primary w-full py-3 text-base">Sign in <ArrowRight className="h-4 w-4" /></button>
+            <button className="btn-primary shine w-full py-3 text-base">Sign in <ArrowRight className="h-4 w-4" /></button>
           </form>
           <div className="mt-8 rounded-2xl bg-slate-100 p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Demo accounts: tap to sign in</p>
-            <div className="mt-3 space-y-2">
+            <div className="stagger mt-3 space-y-2">
               {state.users.map((u) => (
-                <button key={u.id} onClick={() => dispatch({ type: 'LOGIN', user: u })} className="flex w-full items-center gap-3 rounded-xl bg-white p-2.5 text-left ring-1 ring-slate-200 transition hover:ring-brand-400">
+                <button key={u.id} onClick={() => dispatch({ type: 'LOGIN', user: u })} className="group flex w-full items-center gap-3 rounded-xl bg-white p-2.5 text-left ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:shadow-lg hover:ring-violet-400">
                   <span className="grid h-8 w-8 place-items-center rounded-lg text-sm font-bold text-white" style={{ background: u.color }}>{u.name[0]}</span>
                   <span className="flex-1 text-sm"><b className="block text-ink-900">{u.name}</b><span className="text-slate-500">{u.role}</span></span>
-                  <ArrowRight className="h-4 w-4 text-slate-400" />
+                  <ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-violet-600" />
                 </button>
               ))}
             </div>

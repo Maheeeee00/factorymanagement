@@ -35,19 +35,10 @@ export default function Inventory() {
 
   return (
     <div>
-      <PageHead title="Inventory" sub="Raw materials and finished goods in stock">
+      <PageHead tone="green" icon={Boxes} title="Inventory" sub="Raw materials and finished goods in stock" stats={[[isRaw ? 'Materials' : 'Products', source.length], ['Below minimum', low], ['Stock value', value >= 1e6 ? `${state.settings.currency} ${(value / 1e6).toFixed(2)}M` : money(value)]]}>
         <button onClick={exportCsv} className="btn-ghost"><Download className="h-4 w-4" />Export</button>
         {isRaw && <button onClick={() => setEdit({ ...BLANK, supplier: state.suppliers[0]?.id || '' })} className="btn-primary"><Plus className="h-4 w-4" />Add material</button>}
       </PageHead>
-
-      <div className="mb-5 grid grid-cols-3 gap-2 sm:mb-6 sm:gap-4">
-        {[[isRaw ? Boxes : Package, isRaw ? 'Materials' : 'Products', source.length, 'from-brand-500 to-indigo-600'], [AlertTriangle, 'Below minimum', low, 'from-amber-500 to-orange-500'], [Wallet, 'Stock value', <><span className="sm:hidden">{state.settings.currency} {value >= 1e6 ? `${(value / 1e6).toFixed(2)}M` : `${Math.round(value / 1000)}k`}</span><span className="hidden sm:inline">{money(value)}</span></>, 'from-emerald-500 to-teal-500']].map(([Icon, l, v, gr]) => (
-          <div key={l} className="card flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-5">
-            <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br sm:h-12 sm:w-12 sm:rounded-2xl ${gr} text-white shadow-lg`}><Icon className="h-5 w-5 sm:h-6 sm:w-6" /></span>
-            <div className="min-w-0"><p className="truncate text-[11px] text-slate-500 sm:text-sm">{l}</p><p className="truncate font-display text-base font-extrabold text-ink-900 sm:text-2xl">{v}</p></div>
-          </div>
-        ))}
-      </div>
 
       <div className="card">
         <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 p-4">
@@ -64,7 +55,7 @@ export default function Inventory() {
         </div>
 
         {/* Mobile cards */}
-        <div className="divide-y divide-slate-100 md:hidden">
+        <div className="stagger divide-y divide-slate-100 md:hidden">
           {rows.map((i) => {
             const ratio = Math.min(1, i.qty / Math.max(1, i.min * 2))
             const isLow = i.qty < i.min
@@ -96,7 +87,7 @@ export default function Inventory() {
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-sm">
             <thead className="bg-slate-50"><tr><th className="th">Item</th><th className="th">Category</th><th className="th">Level</th><th className="th text-right">In stock</th><th className="th text-right">Min</th><th className="th text-right">Unit cost</th><th className="th text-right">Value</th><th className="th">Status</th><th className="th text-right">Actions</th></tr></thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="stagger divide-y divide-slate-100">
               {rows.map((i) => {
                 const ratio = Math.min(1, i.qty / Math.max(1, i.min * 2))
                 const isLow = i.qty < i.min

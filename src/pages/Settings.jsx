@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Building2, Users, Truck, Database, Save, Plus, Pencil, Trash2, Download, Upload, RotateCcw, Bell, Receipt, Info } from 'lucide-react'
+import { Settings as SettingsIcon, Building2, Users, Truck, Database, Save, Plus, Pencil, Trash2, Download, Upload, RotateCcw, Bell, Receipt, Info } from 'lucide-react'
 import { useStore } from '../lib/store'
 import { PageHead, Toggle, Modal, Field, ConfirmButton, toast } from '../components/ui'
 
@@ -9,7 +9,7 @@ export default function Settings() {
   const [sec, setSec] = useState('company')
   return (
     <div>
-      <PageHead title="Settings" sub="Company profile, contacts, users and data" />
+      <PageHead tone="slate" icon={SettingsIcon} title="Settings" sub="Company profile, contacts, users and data" />
       <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
         <nav className="grid grid-cols-2 gap-1.5 lg:flex lg:flex-col lg:gap-1">
           {SECTIONS.map(([k, l, Icon]) => (
@@ -28,9 +28,9 @@ export default function Settings() {
 }
 
 const Card = ({ icon: Icon, title, sub, children, action }) => (
-  <div className="card mb-5 p-4 sm:p-6">
+  <div className="card mb-5 animate-fadeUp p-4 sm:p-6">
     <div className="mb-5 flex flex-wrap items-center gap-3">
-      <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-brand-600"><Icon className="h-5 w-5" /></span>
+      <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-violet-600 text-white shadow-glow"><Icon className="h-5 w-5" /></span>
       <div className="flex-1"><h3 className="font-bold text-ink-900">{title}</h3>{sub && <p className="text-sm text-slate-500">{sub}</p>}</div>
       {action}
     </div>

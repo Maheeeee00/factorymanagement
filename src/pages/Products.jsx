@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Search, Hammer, Pencil, Trash2, Layers, X, CheckCircle2, AlertTriangle } from 'lucide-react'
+import { Package, Plus, Search, Hammer, Pencil, Trash2, Layers, X, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { useStore, useMoney, fmtQty, productCost, maxProducible } from '../lib/store'
 import { PageHead, Modal, Field, ConfirmButton, StockBadge, Empty, toast } from '../components/ui'
 
@@ -17,7 +17,7 @@ export default function Products() {
 
   return (
     <div>
-      <PageHead title="Products" sub="Finished goods catalogue, bills of materials and production">
+      <PageHead tone="orange" icon={Package} title="Products" sub="Finished goods catalogue, bills of materials and production" stats={[['Products', state.products.length], ['Units in stock', fmtQty(state.products.reduce((a, p) => a + p.qty, 0))], ['Avg. margin', `${Math.round(state.products.reduce((a, p) => a + (p.price ? ((p.price - productCost(p, state.materials)) / p.price) * 100 : 0), 0) / Math.max(1, state.products.length))}%`]]}>
         <button onClick={() => setEdit({ sku: '', name: '', category: state.productCategories[0], emoji: '🍪', bg: BGS[0], price: '', qty: 0, min: 0, bom: [] })} className="btn-primary"><Plus className="h-4 w-4" />Add product</button>
       </PageHead>
 
@@ -28,20 +28,21 @@ export default function Products() {
         </div>
         <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0">
           {['all', ...state.productCategories].map((c) => (
-            <button key={c} onClick={() => setCat(c)} className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold ${cat === c ? 'bg-ink-900 text-white' : 'bg-white ring-1 ring-slate-200 hover:bg-slate-50'}`}>{c === 'all' ? 'All' : c}</button>
+            <button key={c} onClick={() => setCat(c)} className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold ${cat === c ? 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-lg' : 'bg-white ring-1 ring-slate-200 hover:bg-slate-50'}`}>{c === 'all' ? 'All' : c}</button>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="stagger grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         {items.map((p) => {
           const cost = productCost(p, state.materials)
           const margin = p.price ? ((p.price - cost) / p.price) * 100 : 0
           const canMake = maxProducible(p, state.materials)
           return (
-            <div key={p.id} className="card flex flex-col overflow-hidden">
-              <div className="relative grid h-32 place-items-center text-6xl" style={{ background: p.bg }}>
-                {p.emoji}
+            <div key={p.id} className="card lift group flex flex-col overflow-hidden">
+              <div className="relative grid h-32 place-items-center overflow-hidden text-6xl" style={{ background: p.bg }}>
+                <span className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/25 blur-xl" />
+                <span className="drop-shadow-xl transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-125">{p.emoji}</span>
                 <span className="absolute left-3 top-3 chip bg-white/90 text-slate-700">{p.category}</span>
                 <span className="absolute right-3 top-3"><StockBadge qty={p.qty} min={p.min} /></span>
               </div>

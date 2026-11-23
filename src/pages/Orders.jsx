@@ -38,9 +38,9 @@ export default function Orders() {
 
   return (
     <div>
-      <PageHead title="Orders" sub="Sales orders to customers and purchase orders to suppliers">
+      <PageHead tone="purple" icon={ClipboardList} title="Orders" sub="Sales orders to customers and purchase orders to suppliers" stats={[['Open', all.filter((o) => !['delivered', 'received', 'cancelled'].includes(o.status)).length], ['Overdue', all.filter((o) => !['delivered', 'received', 'cancelled'].includes(o.status) && o.dueDate < now).length], ['Total value', (() => { const v = all.filter((o) => o.status !== 'cancelled').reduce((a, o) => a + o.total, 0); return v >= 1e6 ? `${state.settings.currency} ${(v / 1e6).toFixed(1)}M` : money(v) })()]]}>
         <button onClick={exportCsv} className="btn-ghost"><Download className="h-4 w-4" />Export</button>
-        <button onClick={() => setCreating(type)} className="btn-primary"><Plus className="h-4 w-4" />{isSales ? 'New sales order' : 'New purchase order'}</button>
+        <button onClick={() => setCreating(type)} className="btn-primary"><Plus className="h-4 w-4" /><span className="sm:hidden">New order</span><span className="hidden sm:inline">{isSales ? 'New sales order' : 'New purchase order'}</span></button>
       </PageHead>
 
       <div className="card">
@@ -54,11 +54,11 @@ export default function Orders() {
         <div className="no-scrollbar flex gap-2 overflow-x-auto border-b border-slate-100 px-4 py-3">
           {['all', ...flow].map((s) => {
             const c = s === 'all' ? all.length : all.filter((o) => o.status === s).length
-            return <button key={s} onClick={() => { setStatus(s); setPage(0) }} className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold ${status === s ? 'bg-ink-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{s === 'all' ? 'All' : STATUS_LABEL[s]} · {c}</button>
+            return <button key={s} onClick={() => { setStatus(s); setPage(0) }} className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold ${status === s ? 'bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{s === 'all' ? 'All' : STATUS_LABEL[s]} · {c}</button>
           })}
         </div>
         {/* Mobile cards */}
-        <div className="divide-y divide-slate-100 md:hidden">
+        <div className="stagger divide-y divide-slate-100 md:hidden">
           {shown.map((o) => {
             const open = !['delivered', 'received', 'cancelled'].includes(o.status)
             const late = open && o.dueDate < now
@@ -79,7 +79,7 @@ export default function Orders() {
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-sm">
             <thead className="bg-slate-50"><tr><th className="th">Order</th><th className="th">Date</th><th className="th">{isSales ? 'Customer' : 'Supplier'}</th><th className="th">Items</th><th className="th">Due</th><th className="th text-right">Total</th><th className="th text-right">Status</th></tr></thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="stagger divide-y divide-slate-100">
               {shown.map((o) => {
                 const open = !['delivered', 'received', 'cancelled'].includes(o.status)
                 const late = open && o.dueDate < now

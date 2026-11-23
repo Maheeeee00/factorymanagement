@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid, PieChart, Pie, Cell } from 'recharts'
-import { Wallet, ClipboardList, AlertTriangle, Factory, TrendingUp, TrendingDown, ArrowRight, PackagePlus, Plus, ArrowDownToLine, ArrowUpFromLine, Hammer, Pencil, FileText } from 'lucide-react'
+import { LayoutDashboard, Wallet, ClipboardList, AlertTriangle, Factory, TrendingUp, TrendingDown, ArrowRight, PackagePlus, Plus, ArrowDownToLine, ArrowUpFromLine, Hammer, Pencil, FileText } from 'lucide-react'
 import { useStore, useMoney, productCost, timeAgo, fmtDate, fmtQty, STATUS_LABEL } from '../lib/store'
-import { PageHead, StatusBadge } from '../components/ui'
+import { PageHead, StatusBadge, CountUp } from '../components/ui'
 
 const DAY = 86400000
-const COLORS = ['#f59e0b', '#8b5cf6', '#0ea5e9', '#6366f1', '#10b981', '#f43f5e']
+const COLORS = ['#f59e0b', '#8b5cf6', '#0ea5e9', '#ec4899', '#10b981', '#f43f5e']
+const BAR_COLORS = ['#2550eb', '#7c3aed', '#db2777', '#f97316', '#eab308', '#10b981', '#06b6d4', '#6366f1']
 export const KIND_ICON = { stock_in: [ArrowDownToLine, 'bg-emerald-50 text-emerald-600'], stock_out: [ArrowUpFromLine, 'bg-rose-50 text-rose-600'], production: [Hammer, 'bg-amber-50 text-amber-600'], order: [FileText, 'bg-brand-50 text-brand-600'], edit: [Pencil, 'bg-slate-100 text-slate-600'] }
 
 export default function Dashboard() {
@@ -40,42 +41,44 @@ export default function Dashboard() {
   const greet = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening'
 
   const kpis = [
-    { label: 'Sales this month', value: money(thisMonth), icon: Wallet, grad: 'from-brand-500 to-indigo-600', change },
-    { label: 'Open orders', value: open.length, sub: `${open.filter((o) => o.dueDate < now + 3 * DAY).length} due in 3 days`, icon: ClipboardList, grad: 'from-violet-500 to-fuchsia-500', to: '/orders' },
-    { label: 'Inventory value', value: money(stockValue), sub: `${materials.length} materials · ${products.length} products`, icon: Factory, grad: 'from-emerald-500 to-teal-500', to: '/inventory' },
-    { label: 'Low stock items', value: lowM.length + lowP.length, sub: lowM.length + lowP.length ? 'Needs reordering' : 'All healthy', icon: AlertTriangle, grad: 'from-amber-500 to-orange-500', to: '/inventory', warn: lowM.length + lowP.length > 0 },
+    { label: 'Sales this month', num: thisMonth, fmt: money, icon: Wallet, grad: 'from-brand-500 via-indigo-500 to-violet-600', change },
+    { label: 'Open orders', num: open.length, sub: `${open.filter((o) => o.dueDate < now + 3 * DAY).length} due in 3 days`, icon: ClipboardList, grad: 'from-fuchsia-500 via-pink-500 to-rose-500', to: '/orders' },
+    { label: 'Inventory value', num: stockValue, fmt: money, sub: `${materials.length} materials · ${products.length} products`, icon: Factory, grad: 'from-emerald-500 via-teal-500 to-cyan-500', to: '/inventory' },
+    { label: 'Low stock items', num: lowM.length + lowP.length, sub: lowM.length + lowP.length ? 'Needs reordering' : 'All healthy', icon: AlertTriangle, grad: 'from-amber-400 via-orange-500 to-red-500', to: '/inventory' },
   ]
 
   return (
     <div className="space-y-6">
-      <PageHead title={`${greet}, ${state.session.name.split(' ')[0]} 👋`} sub={`Here's what's happening at ${state.settings.companyName} today.`}>
+      <PageHead tone="blue" icon={LayoutDashboard} title={`${greet}, ${state.session.name.split(' ')[0]} 👋`} sub={`Here's what's happening at ${state.settings.companyName} today.`}>
         <Link to="/products" className="btn-ghost"><Hammer className="h-4 w-4" /><span className="sm:hidden">Produce</span><span className="hidden sm:inline">Record production</span></Link>
         <Link to="/orders?new=sales" className="btn-primary"><Plus className="h-4 w-4" />New order</Link>
       </PageHead>
 
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+      <div className="stagger grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {kpis.map((k) => {
           const Inner = (
             <>
-              <div className={`absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br ${k.grad} opacity-10`} />
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-xs font-medium text-slate-500 sm:text-sm">{k.label}</p>
-                <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br sm:h-10 sm:w-10 sm:rounded-xl ${k.grad} text-white shadow-lg`}><k.icon className="h-4 w-4 sm:h-5 sm:w-5" /></span>
+              <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/20 blur-xl transition-transform duration-500 group-hover:scale-150" />
+              <div className="pointer-events-none absolute -bottom-10 -left-6 h-24 w-24 rounded-full bg-black/10 blur-xl" />
+              <div className="relative flex items-start justify-between gap-2">
+                <p className="text-xs font-semibold text-white/85 sm:text-sm">{k.label}</p>
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/20 ring-1 ring-white/30 backdrop-blur transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110 sm:h-10 sm:w-10 sm:rounded-xl"><k.icon className="h-4 w-4 sm:h-5 sm:w-5" /></span>
               </div>
-              <p className={`mt-2 truncate font-display text-lg font-extrabold sm:mt-3 sm:text-3xl ${k.warn ? 'text-amber-600' : 'text-ink-900'}`}>{k.value}</p>
+              <p className="relative mt-2 truncate font-display text-lg font-extrabold drop-shadow-sm sm:mt-3 sm:text-3xl"><CountUp value={k.num} format={k.fmt || ((n) => Math.round(n).toLocaleString())} /></p>
               {k.change !== undefined ? (
-                <p className={`mt-1 flex items-center gap-1 text-[11px] font-semibold sm:text-xs ${k.change >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                  {k.change >= 0 ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}{Math.abs(k.change).toFixed(1)}% <span className="hidden font-normal text-slate-400 sm:inline">vs same period last month</span><span className="font-normal text-slate-400 sm:hidden">vs last mo.</span>
+                <p className="relative mt-1 flex items-center gap-1 text-[11px] font-semibold text-white sm:text-xs">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-1.5 py-0.5">{k.change >= 0 ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}{Math.abs(k.change).toFixed(1)}%</span> <span className="hidden font-normal text-white/80 sm:inline">vs same period last month</span><span className="font-normal text-white/80 sm:hidden">vs last mo.</span>
                 </p>
-              ) : <p className="mt-1 truncate text-[11px] text-slate-500 sm:text-xs">{k.sub}</p>}
+              ) : <p className="relative mt-1 truncate text-[11px] text-white/80 sm:text-xs">{k.sub}</p>}
             </>
           )
-          return k.to ? <Link key={k.label} to={k.to} className="card relative overflow-hidden p-4 transition hover:-translate-y-0.5 hover:shadow-lg sm:p-5">{Inner}</Link> : <div key={k.label} className="card relative overflow-hidden p-4 sm:p-5">{Inner}</div>
+          const cls = `group shine relative min-w-0 overflow-hidden rounded-2xl bg-gradient-to-br anim-gradient p-4 text-white shadow-lg lift sm:p-5 ${k.grad}`
+          return k.to ? <Link key={k.label} to={k.to} className={cls}>{Inner}</Link> : <div key={k.label} className={cls}>{Inner}</div>
         })}
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-3">
-        <div className="card p-5 xl:col-span-2">
+      <div className="stagger grid gap-4 xl:grid-cols-3">
+        <div className="card lift p-5 xl:col-span-2">
           <div className="flex items-center justify-between">
             <div><h3 className="font-bold text-ink-900">Sales</h3><p className="text-sm text-slate-500">Last 30 days</p></div>
             <p className="font-display text-xl font-extrabold">{money(series.reduce((s, d) => s + d.sales, 0))}</p>
@@ -83,17 +86,17 @@ export default function Dashboard() {
           <div className="mt-4 h-52 sm:h-64">
             <ResponsiveContainer>
               <AreaChart data={series} margin={{ left: -6, right: 8 }}>
-                <defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#3b6cf6" stopOpacity={0.35} /><stop offset="1" stopColor="#3b6cf6" stopOpacity={0} /></linearGradient></defs>
+                <defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#8b5cf6" stopOpacity={0.45} /><stop offset="1" stopColor="#3b6cf6" stopOpacity={0} /></linearGradient><linearGradient id="sl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#2550eb" /><stop offset=".5" stopColor="#7c3aed" /><stop offset="1" stopColor="#db2777" /></linearGradient></defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef2f7" />
                 <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} interval={4} />
                 <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={(v) => (v >= 1e6 ? `${(v / 1e6).toFixed(1)}M` : `${Math.round(v / 1000)}k`)} />
                 <Tooltip formatter={(v) => money(v)} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0' }} />
-                <Area type="monotone" dataKey="sales" stroke="#2550eb" strokeWidth={3} fill="url(#s)" />
+                <Area type="monotone" dataKey="sales" stroke="url(#sl)" strokeWidth={3} fill="url(#s)" animationDuration={1200} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="card p-5">
+        <div className="card lift p-5">
           <h3 className="font-bold text-ink-900">Open orders by status</h3>
           <p className="text-sm text-slate-500">Sales orders not yet delivered</p>
           <div className="relative h-48">
@@ -106,8 +109,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-3">
-        <div className="card p-5 xl:col-span-2">
+      <div className="stagger grid gap-4 xl:grid-cols-3">
+        <div className="card lift p-5 xl:col-span-2">
           <div className="flex items-center justify-between">
             <div><h3 className="font-bold text-ink-900">Production output</h3><p className="text-sm text-slate-500">Units produced, last 30 days · {fmtQty(producedMonth)} units this month</p></div>
             <Link to="/products" className="text-sm font-semibold text-brand-600">Produce</Link>
@@ -119,12 +122,12 @@ export default function Dashboard() {
                 <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <Tooltip cursor={{ fill: '#eef4ff' }} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0' }} />
-                <Bar dataKey="qty" name="Units" radius={[6, 6, 0, 0]} fill="#3b6cf6" />
+                <Bar dataKey="qty" name="Units" radius={[8, 8, 0, 0]} animationDuration={1000}>{production.map((_, i) => <Cell key={i} fill={BAR_COLORS[i % BAR_COLORS.length]} />)}</Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="card p-5">
+        <div className="card lift p-5">
           <div className="flex items-center justify-between"><h3 className="font-bold text-ink-900">Low stock</h3><Link to="/inventory" className="text-sm font-semibold text-brand-600">Inventory</Link></div>
           <div className="mt-4 space-y-2">
             {!lowM.length && !lowP.length && <p className="py-8 text-center text-sm text-slate-500">All stock levels healthy ✅</p>}
@@ -139,8 +142,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-2">
-        <div className="card p-5">
+      <div className="stagger grid gap-4 xl:grid-cols-2">
+        <div className="card lift p-5">
           <div className="flex items-center justify-between"><h3 className="font-bold text-ink-900">Orders due soon</h3><Link to="/orders" className="flex items-center gap-1 text-sm font-semibold text-brand-600">All orders <ArrowRight className="h-4 w-4" /></Link></div>
           <div className="mt-3 divide-y divide-slate-100">
             {due.length === 0 && <p className="py-8 text-center text-sm text-slate-500">No open orders</p>}
@@ -155,7 +158,7 @@ export default function Dashboard() {
             })}
           </div>
         </div>
-        <div className="card p-5">
+        <div className="card lift p-5">
           <div className="flex items-center justify-between"><h3 className="font-bold text-ink-900">Recent activity</h3><Link to="/history" className="flex items-center gap-1 text-sm font-semibold text-brand-600">Full history <ArrowRight className="h-4 w-4" /></Link></div>
           <div className="mt-3 space-y-1">
             {history.slice(0, 6).map((h) => {

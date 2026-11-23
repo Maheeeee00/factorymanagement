@@ -49,15 +49,9 @@ export default function History() {
 
   return (
     <div>
-      <PageHead title="History" sub="Complete audit trail of stock movements, production, orders and changes">
+      <PageHead tone="sky" icon={HistoryIcon} title="History" sub="Complete audit trail of stock movements, production, orders and changes" stats={[['Entries', list.length], ['Stock in / out', `${stats.in} / ${stats.out}`], ['Units produced', fmtQty(stats.prod)]]}>
         <button onClick={exportCsv} className="btn-ghost"><Download className="h-4 w-4" />Export CSV</button>
       </PageHead>
-
-      <div className="mb-5 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-4">
-        {[['Entries', list.length, 'text-ink-900'], ['Stock-in movements', stats.in, 'text-emerald-600'], ['Stock-out movements', stats.out, 'text-rose-600'], ['Units produced', fmtQty(stats.prod), 'text-amber-600']].map(([l, v, c]) => (
-          <div key={l} className="card p-3 sm:p-4"><p className="truncate text-[11px] font-medium text-slate-500 sm:text-xs">{l}</p><p className={`mt-1 font-display text-xl font-extrabold sm:text-2xl ${c}`}>{v}</p></div>
-        ))}
-      </div>
 
       <div className="card">
         <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 p-4">
@@ -69,7 +63,7 @@ export default function History() {
           <select value={user} onChange={(e) => setUser(e.target.value)} className="input flex-1 sm:w-auto sm:flex-none"><option value="all">All users</option>{users.map((u) => <option key={u}>{u}</option>)}</select>
         </div>
         <div className="no-scrollbar flex gap-2 overflow-x-auto border-b border-slate-100 px-4 py-3">
-          {KINDS.map(([k, l]) => <button key={k} onClick={() => { setKind(k); setLimit(40) }} className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold ${kind === k ? 'bg-ink-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{l}</button>)}
+          {KINDS.map(([k, l]) => <button key={k} onClick={() => { setKind(k); setLimit(40) }} className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold ${kind === k ? 'bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{l}</button>)}
         </div>
 
         <div className="p-4 sm:p-6">
@@ -77,7 +71,7 @@ export default function History() {
           {groups.map((g) => (
             <div key={g.d} className="mb-6 last:mb-0">
               <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">{dayLabel(g.d)}</p>
-              <div className="relative space-y-1 border-l-2 border-slate-100 pl-5 sm:pl-6">
+              <div className="stagger relative space-y-1 border-l-2 border-indigo-100 pl-5 sm:pl-6">
                 {g.items.map((h) => {
                   const [Icon, cls] = KIND_ICON[h.kind] || KIND_ICON.edit
                   return (
