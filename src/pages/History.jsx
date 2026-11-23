@@ -1,0 +1,108 @@
+import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { Search, Download, History as HistoryIcon } from 'lucide-react'
+import { useStore, fmtQty, toCSV, download } from '../lib/store'
+import { PageHead, Empty } from '../components/ui'
+import { KIND_ICON } from './Dashboard'
+
+const KINDS = [['all', 'All activity'], ['stock_in', 'Stock in'], ['stock_out', 'Stock out'], ['production', 'Production'], ['order', 'Orders'], ['edit', 'Changes']]
+const RANGES = [['7', 'Last 7 days'], ['30', 'Last 30 days'], ['all', 'All time']]
+const DAY = 86400000
+
+export default function History() {
+  const { state } = useStore()
+  const [params] = useSearchParams()
+  const [q, setQ] = useState(params.get('q') || '')
+  const [kind, setKind] = useState('all')
+  const [range, setRange] = useState('30')
+  const [user, setUser] = useState('all')
+  const [limit, setLimit] = useState(40)
+
+  const users = [...new Set(state.history.map((h) => h.user))]
+  const list = useMemo(() => state.history.filter((h) =>
+    (kind === 'all' || h.kind === kind) &&
+    (range === 'all' || h.at >= Date.now() - +range * DAY) &&
+    (user === 'all' || h.user === user) &&
+    `${h.action} ${h.ref || ''} ${h.item || ''} ${h.detail || ''} ${h.user}`.toLowerCase().includes(q.toLowerCase())), [state.history, kind, range, user, q])
+
+  const stats = {
+    in: list.filter((h) => h.kind === 'stock_in').length,
+    out: list.filter((h) => h.kind === 'stock_out').length,
+    prod: list.filter((h) => h.kind === 'production').reduce((s, h) => s + (h.qty || 0), 0),
+  }
+
+  const groups = []
+  list.slice(0, limit).forEach((h) => {
+    const d = new Date(h.at).toDateString()
+    const g = groups[groups.length - 1]
+    if (g && g.d === d) g.items.push(h)
+    else groups.push({ d, items: [h] })
+  })
+  const dayLabel = (d) => {
+    const t = new Date(d).getTime(), today = new Date().setHours(0, 0, 0, 0)
+    if (t === today) return 'Today'
+    if (t === today - DAY) return 'Yesterday'
+    return new Date(d).toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  }
+
+  const exportCsv = () => download('history.csv', toCSV([['Date', 'Type', 'Action', 'Reference', 'Item', 'Qty', 'Details', 'User'], ...list.map((h) => [new Date(h.at).toLocaleString(), h.kind, h.action, h.ref || '', h.item || '', h.qty ?? '', h.detail || '', h.user])]))
+
+  return (
+    <div>
+      <PageHead title="History" sub="Complete audit trail of stock movements, production, orders and changes">
+        <button onClick={exportCsv} className="btn-ghost"><Download className="h-4 w-4" />Export CSV</button>
+      </PageHead>
+
+      <div className="mb-5 grid gap-4 sm:grid-cols-4">
+        {[['Entries', list.length, 'text-ink-900'], ['Stock-in movements', stats.in, 'text-emerald-600'], ['Stock-out movements', stats.out, 'text-rose-600'], ['Units produced', fmtQty(stats.prod), 'text-amber-600']].map(([l, v, c]) => (
+          <div key={l} className="card p-4"><p className="text-xs font-medium text-slate-500">{l}</p><p className={`mt-1 font-display text-2xl font-extrabold ${c}`}>{v}</p></div>
+        ))}
+      </div>
+
+      <div className="card">
+        <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 p-4">
+          <div className="relative min-w-[220px] flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input value={q} onChange={(e) => { setQ(e.target.value); setLimit(40) }} className="input pl-9" placeholder="Search order no., SKU, item, user…" />
+          </div>
+          <select value={range} onChange={(e) => setRange(e.target.value)} className="input w-auto">{RANGES.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>
+          <select value={user} onChange={(e) => setUser(e.target.value)} className="input w-auto"><option value="all">All users</option>{users.map((u) => <option key={u}>{u}</option>)}</select>
+        </div>
+        <div className="scrollbar-thin flex gap-2 overflow-x-auto border-b border-slate-100 px-4 py-3">
+          {KINDS.map(([k, l]) => <button key={k} onClick={() => { setKind(k); setLimit(40) }} className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold ${kind === k ? 'bg-ink-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>{l}</button>)}
+        </div>
+
+        <div className="p-4 sm:p-6">
+          {groups.length === 0 && <Empty icon={HistoryIcon} title="No activity found" text="Try a wider date range or a different filter" />}
+          {groups.map((g) => (
+            <div key={g.d} className="mb-6 last:mb-0">
+              <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">{dayLabel(g.d)}</p>
+              <div className="relative space-y-1 border-l-2 border-slate-100 pl-6">
+                {g.items.map((h) => {
+                  const [Icon, cls] = KIND_ICON[h.kind] || KIND_ICON.edit
+                  return (
+                    <div key={h.id} className="relative flex flex-wrap items-start gap-3 rounded-xl px-3 py-2.5 hover:bg-slate-50">
+                      <span className={`absolute -left-[42px] top-2.5 grid h-8 w-8 place-items-center rounded-lg ring-4 ring-white ${cls}`}><Icon className="h-4 w-4" /></span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-ink-900">
+                          {h.action}{h.item ? <span className="font-normal text-slate-600"> · {h.item}</span> : null}
+                          {h.qty ? <span className={`ml-2 chip ${h.qty > 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>{h.qty > 0 ? '+' : ''}{fmtQty(h.qty)}</span> : null}
+                        </p>
+                        <p className="mt-0.5 text-xs text-slate-500">{h.detail}</p>
+                      </div>
+                      <div className="text-right text-xs text-slate-500">
+                        <p className="font-mono font-semibold text-slate-700">{h.ref}</p>
+                        <p>{h.user} · {new Date(h.at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+          {list.length > limit && <div className="text-center"><button onClick={() => setLimit(limit + 40)} className="btn-ghost">Load more ({list.length - limit} remaining)</button></div>}
+        </div>
+      </div>
+    </div>
+  )
+}
