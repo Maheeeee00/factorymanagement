@@ -35,7 +35,7 @@ export default function Dashboard() {
   })
   const prodMap = {}
   history.filter((h) => h.kind === 'production' && h.at >= now - 30 * DAY).forEach((h) => { prodMap[h.item] = (prodMap[h.item] || 0) + h.qty })
-  const production = Object.entries(prodMap).map(([name, qty]) => ({ name: name.replace(/\s\d+(g|kg|ml|L)$/, ''), qty })).sort((a, b) => b.qty - a.qty).slice(0, 8)
+  const production = Object.entries(prodMap).map(([name, qty]) => ({ name, qty })).sort((a, b) => b.qty - a.qty).slice(0, 8)
   const statusData = ['pending', 'in_production', 'ready', 'dispatched'].map((k) => ({ name: STATUS_LABEL[k], value: orders.filter((o) => o.type === 'sales' && o.status === k).length })).filter((x) => x.value)
   const due = open.slice().sort((a, b) => a.dueDate - b.dueDate).slice(0, 5)
   const greet = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening'
@@ -112,7 +112,7 @@ export default function Dashboard() {
       <div className="stagger grid gap-4 xl:grid-cols-3">
         <div className="card lift p-5 xl:col-span-2">
           <div className="flex items-center justify-between">
-            <div><h3 className="font-bold text-ink-900">Production output</h3><p className="text-sm text-slate-500">Units produced, last 30 days · {fmtQty(producedMonth)} units this month</p></div>
+            <div><h3 className="font-bold text-ink-900">Production output</h3><p className="text-sm text-slate-500">Bags produced, last 30 days · {fmtQty(producedMonth)} bags this month</p></div>
             <Link to="/products" className="text-sm font-semibold text-brand-600">Produce</Link>
           </div>
           <div className="mt-4 h-48 sm:h-56">
@@ -122,7 +122,7 @@ export default function Dashboard() {
                 <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <Tooltip cursor={{ fill: '#eef4ff' }} contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0' }} />
-                <Bar dataKey="qty" name="Units" radius={[8, 8, 0, 0]} animationDuration={1000}>{production.map((_, i) => <Cell key={i} fill={BAR_COLORS[i % BAR_COLORS.length]} />)}</Bar>
+                <Bar dataKey="qty" name="Bags" radius={[8, 8, 0, 0]} animationDuration={1000}>{production.map((_, i) => <Cell key={i} fill={BAR_COLORS[i % BAR_COLORS.length]} />)}</Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -131,7 +131,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between"><h3 className="font-bold text-ink-900">Low stock</h3><Link to="/inventory" className="text-sm font-semibold text-brand-600">Inventory</Link></div>
           <div className="mt-4 space-y-2">
             {!lowM.length && !lowP.length && <p className="py-8 text-center text-sm text-slate-500">All stock levels healthy ✅</p>}
-            {[...lowM.map((m) => ({ ...m, kindLabel: 'Material' })), ...lowP.map((p) => ({ ...p, unit: 'pcs', kindLabel: 'Product' }))].slice(0, 6).map((i) => (
+            {[...lowM.map((m) => ({ ...m, kindLabel: 'Material' })), ...lowP.map((p) => ({ ...p, unit: 'bags', kindLabel: 'Product' }))].slice(0, 6).map((i) => (
               <div key={i.id} className="rounded-xl bg-amber-50/60 p-3 ring-1 ring-amber-100">
                 <div className="flex items-center justify-between text-sm"><b>{i.name}</b><span className="font-bold text-amber-700">{fmtQty(i.qty)} {i.unit}</span></div>
                 <div className="mt-2 h-1.5 rounded-full bg-amber-100"><div className="h-full rounded-full bg-amber-500" style={{ width: `${Math.min(100, (i.qty / i.min) * 100)}%` }} /></div>

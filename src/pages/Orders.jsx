@@ -187,7 +187,7 @@ function NewOrder({ type, onClose, onCreated }) {
   const money = useMoney()
   const isSales = type === 'sales'
   const parties = isSales ? state.customers : state.suppliers
-  const catalog = isSales ? state.products.map((p) => ({ id: p.id, name: p.name, price: p.price, stock: p.qty, unit: 'pcs' })) : state.materials.map((m) => ({ id: m.id, name: m.name, price: m.cost, stock: m.qty, unit: m.unit }))
+  const catalog = isSales ? state.products.map((p) => ({ id: p.id, name: p.name, price: p.price, stock: p.qty, unit: 'bags' })) : state.materials.map((m) => ({ id: m.id, name: m.name, price: m.cost, stock: m.qty, unit: m.unit }))
   const [party, setParty] = useState(parties[0]?.id || '')
   const [due, setDue] = useState(new Date(Date.now() + 7 * DAY).toISOString().slice(0, 10))
   const [lines, setLines] = useState([{ id: '', qty: '', price: '' }])

@@ -24,7 +24,7 @@ export default function Layout() {
 
   const lowMaterials = state.materials.filter((m) => m.qty < m.min)
   const lowProducts = state.products.filter((p) => p.qty < p.min)
-  const alerts = [...lowMaterials.map((m) => ({ id: m.id, text: `${m.name} is low`, sub: `${m.qty} ${m.unit} left (min ${m.min})`, to: '/inventory' })), ...lowProducts.map((p) => ({ id: p.id, text: `${p.name} stock low`, sub: `${p.qty} pcs left (min ${p.min})`, to: '/inventory?tab=finished' }))]
+  const alerts = [...lowMaterials.map((m) => ({ id: m.id, text: `${m.name} is low`, sub: `${m.qty} ${m.unit} left (min ${m.min})`, to: '/inventory' })), ...lowProducts.map((p) => ({ id: p.id, text: `${p.name} stock low`, sub: `${p.qty} bags left (min ${p.min})`, to: '/inventory?tab=finished' }))]
   const pendingOrders = state.orders.filter((o) => o.type === 'sales' && ['pending', 'in_production', 'ready'].includes(o.status)).length
   const user = state.session
   const current = NAV.find(([, to]) => (to === '/' ? pathname === '/' : pathname.startsWith(to)))

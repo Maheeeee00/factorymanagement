@@ -18,7 +18,7 @@ Built with **React 18 + Vite + Tailwind CSS + Recharts**. Demo data is stored in
 | **History** | Complete audit trail: stock in/out, production, orders and edits, filtered by type, date range and user, with search and CSV export |
 | **Settings** | Company profile, currency, tax, order prefixes, low-stock alerts, customers and suppliers, users and roles, **backup/restore (JSON)**, reset demo |
 
-The demo factory ("Golden Harvest Foods Ltd.": bakery, snacks, beverages and sauces) and all its data are fictional.
+The demo is set up as a flour mill with four product categories (**Atta, Maida, Fine, Chokar**) in bag sizes: Atta 10/15/20/79 kg, Maida 10/50/80 kg, Fine 80 kg, Chokar 50 kg. Raw materials are wheat, PP bags, stitching thread and diesel. The company name and all prices are sample values; change them in Settings and Products.
 
 ---
 

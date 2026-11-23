@@ -3,7 +3,7 @@ import { Package, Plus, Search, Hammer, Pencil, Trash2, Layers, X, CheckCircle2,
 import { useStore, useMoney, fmtQty, productCost, maxProducible } from '../lib/store'
 import { PageHead, Modal, Field, ConfirmButton, StockBadge, Empty, toast } from '../components/ui'
 
-const EMOJIS = ['🍪', '🍫', '🍞', '🥐', '🎂', '🥔', '🥜', '🍿', '🥭', '🧃', '🥤', '🍅', '🍓', '🫙', '🧂', '🌶️']
+const EMOJIS = ['🌾', '🥐', '🫓', '🟤', '🍞', '🥖', '🍚', '🌽', '🫘', '🥣', '🧺', '📦']
 const BGS = ['linear-gradient(135deg,#bfdbfe,#2563eb)', 'linear-gradient(135deg,#e0e7ff,#4f46e5)', 'linear-gradient(135deg,#d1fae5,#059669)', 'linear-gradient(135deg,#fef3c7,#d97706)', 'linear-gradient(135deg,#fecaca,#dc2626)', 'linear-gradient(135deg,#e7e5e4,#57534e)', 'linear-gradient(135deg,#cffafe,#0891b2)']
 
 export default function Products() {
@@ -17,8 +17,8 @@ export default function Products() {
 
   return (
     <div>
-      <PageHead tone="orange" icon={Package} title="Products" sub="Finished goods catalogue, bills of materials and production" stats={[['Products', state.products.length], ['Units in stock', fmtQty(state.products.reduce((a, p) => a + p.qty, 0))], ['Avg. margin', `${Math.round(state.products.reduce((a, p) => a + (p.price ? ((p.price - productCost(p, state.materials)) / p.price) * 100 : 0), 0) / Math.max(1, state.products.length))}%`]]}>
-        <button onClick={() => setEdit({ sku: '', name: '', category: state.productCategories[0], emoji: '🍪', bg: BGS[0], price: '', qty: 0, min: 0, bom: [] })} className="btn-primary"><Plus className="h-4 w-4" />Add product</button>
+      <PageHead tone="orange" icon={Package} title="Products" sub="Finished goods catalogue, bills of materials and production" stats={[['Products', state.products.length], ['Bags in stock', fmtQty(state.products.reduce((a, p) => a + p.qty, 0))], ['Avg. margin', `${Math.round(state.products.reduce((a, p) => a + (p.price ? ((p.price - productCost(p, state.materials)) / p.price) * 100 : 0), 0) / Math.max(1, state.products.length))}%`]]}>
+        <button onClick={() => setEdit({ sku: '', name: '', category: state.productCategories[0], emoji: '🌾', bg: BGS[3], price: '', qty: 0, min: 0, bom: [] })} className="btn-primary"><Plus className="h-4 w-4" />Add product</button>
       </PageHead>
 
       <div className="mb-5 flex flex-wrap items-center gap-3">
@@ -87,7 +87,7 @@ function ProduceModal({ product, onClose }) {
   return (
     <Modal open onClose={close} title={`Produce · ${product.name}`}>
       <form onSubmit={(e) => { e.preventDefault(); if (!ok) return; dispatch({ type: 'PRODUCE', id: product.id, qty: n }); toast(`Produced ${fmtQty(n)} × ${product.name}`); close() }} className="space-y-4">
-        <Field label="Quantity to produce (pcs)">
+        <Field label="Quantity to produce (bags)">
           <div className="flex gap-2">
             <input autoFocus required type="number" min="1" step="1" className="input py-3 text-lg" value={qty} onChange={(e) => setQty(e.target.value)} />
             <button type="button" onClick={() => setQty(String(max))} className="btn-ghost shrink-0">Max {fmtQty(max)}</button>

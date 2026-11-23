@@ -5,7 +5,7 @@ import { DEFAULT_SETTINGS, MATERIALS, PRODUCTS, CUSTOMERS, SUPPLIERS, USERS, MAT
 // Every change that touches stock writes an entry to `history` (the audit trail).
 // To go live, replace these reducer actions with PocketBase/Supabase calls.
 
-const KEY = 'factora-state-v2'
+const KEY = 'factora-state-v3'
 const Ctx = createContext(null)
 
 export function initialState() {

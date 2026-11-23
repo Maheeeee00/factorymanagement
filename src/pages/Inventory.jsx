@@ -4,7 +4,7 @@ import { Plus, Search, Download, ArrowDownToLine, ArrowUpFromLine, Pencil, Trash
 import { useStore, useMoney, fmtQty, productCost, toCSV, download } from '../lib/store'
 import { PageHead, Tabs, StockBadge, Modal, Field, ConfirmButton, Empty, toast } from '../components/ui'
 
-const BLANK = { sku: '', name: '', category: 'Grains & Flour', unit: 'kg', qty: 0, min: 0, cost: 0, supplier: '', location: '' }
+const BLANK = { sku: '', name: '', category: 'Grain', unit: 'kg', qty: 0, min: 0, cost: 0, supplier: '', location: '' }
 
 export default function Inventory() {
   const { state, dispatch } = useStore()
@@ -18,7 +18,7 @@ export default function Inventory() {
   const [edit, setEdit] = useState(null)
 
   const isRaw = tab === 'raw'
-  const source = isRaw ? state.materials : state.products.map((p) => ({ ...p, unit: 'pcs', cost: productCost(p, state.materials) }))
+  const source = isRaw ? state.materials : state.products.map((p) => ({ ...p, unit: 'bags', cost: productCost(p, state.materials) }))
   const cats = isRaw ? state.materialCategories : state.productCategories
   const rows = useMemo(() => source.filter((i) =>
     (cat === 'all' || i.category === cat) &&
@@ -136,12 +136,12 @@ export default function Inventory() {
               <Field label="Name"><input required className="input" value={edit.name} onChange={(e) => setEdit({ ...edit, name: e.target.value })} /></Field>
               <Field label="SKU"><input required className="input" value={edit.sku} onChange={(e) => setEdit({ ...edit, sku: e.target.value.toUpperCase() })} placeholder="RM-XXX-01" /></Field>
               <Field label="Category"><select className="input" value={edit.category} onChange={(e) => setEdit({ ...edit, category: e.target.value })}>{state.materialCategories.map((c) => <option key={c}>{c}</option>)}</select></Field>
-              <Field label="Unit"><select className="input" value={edit.unit} onChange={(e) => setEdit({ ...edit, unit: e.target.value })}>{['kg', 'g', 'pcs', 'rolls', 'cans', 'L', 'm', 'boxes'].map((u) => <option key={u}>{u}</option>)}</select></Field>
+              <Field label="Unit"><select className="input" value={edit.unit} onChange={(e) => setEdit({ ...edit, unit: e.target.value })}>{['kg', 'tons', 'pcs', 'bags', 'spools', 'L', 'rolls'].map((u) => <option key={u}>{u}</option>)}</select></Field>
               {!edit.id && <Field label="Opening stock"><input type="number" step="any" min="0" className="input" value={edit.qty} onChange={(e) => setEdit({ ...edit, qty: e.target.value })} /></Field>}
               <Field label="Minimum level"><input type="number" step="any" min="0" className="input" value={edit.min} onChange={(e) => setEdit({ ...edit, min: e.target.value })} /></Field>
               <Field label={`Unit cost (${state.settings.currency})`}><input type="number" step="any" min="0" className="input" value={edit.cost} onChange={(e) => setEdit({ ...edit, cost: e.target.value })} /></Field>
               <Field label="Supplier"><select className="input" value={edit.supplier} onChange={(e) => setEdit({ ...edit, supplier: e.target.value })}><option value="">—</option>{state.suppliers.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select></Field>
-              <Field label="Location" className="sm:col-span-2"><input className="input" value={edit.location} onChange={(e) => setEdit({ ...edit, location: e.target.value })} placeholder="e.g. Dry store A-1" /></Field>
+              <Field label="Location" className="sm:col-span-2"><input className="input" value={edit.location} onChange={(e) => setEdit({ ...edit, location: e.target.value })} placeholder="e.g. Silo 1, Bag store A" /></Field>
             </div>
             <button className="btn-primary w-full py-3">Save material</button>
           </form>

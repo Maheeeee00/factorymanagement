@@ -49,7 +49,7 @@ export default function History() {
 
   return (
     <div>
-      <PageHead tone="sky" icon={HistoryIcon} title="History" sub="Complete audit trail of stock movements, production, orders and changes" stats={[['Entries', list.length], ['Stock in / out', `${stats.in} / ${stats.out}`], ['Units produced', fmtQty(stats.prod)]]}>
+      <PageHead tone="sky" icon={HistoryIcon} title="History" sub="Complete audit trail of stock movements, production, orders and changes" stats={[['Entries', list.length], ['Stock in / out', `${stats.in} / ${stats.out}`], ['Bags produced', fmtQty(stats.prod)]]}>
         <button onClick={exportCsv} className="btn-ghost"><Download className="h-4 w-4" />Export CSV</button>
       </PageHead>
 
