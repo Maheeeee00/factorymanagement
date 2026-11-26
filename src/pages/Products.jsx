@@ -23,8 +23,8 @@ export default function Products() {
 
       <div className="mb-5 flex flex-wrap items-center gap-3">
         <div className="relative w-full sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} className="input pl-9" placeholder="Search products" />
+          <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} className="input ps-9" placeholder="Search products" />
         </div>
         <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:px-0">
           {['all', ...state.productCategories].map((c) => (

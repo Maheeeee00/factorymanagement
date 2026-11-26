@@ -1,4 +1,6 @@
+import { useLayoutEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { applyLanguage } from './lib/i18n'
 import { useStore } from './lib/store'
 import Login from './pages/Login'
 import Layout from './pages/Layout'
@@ -12,9 +14,11 @@ import { Toaster } from './components/ui'
 
 export default function App() {
   const { state } = useStore()
-  if (!state.session) return <><Login /><Toaster /></>
+  const lang = state.settings.lang || 'en'
+  useLayoutEffect(() => { applyLanguage(lang) }, [lang])
+  if (!state.session) return <div key={lang}><Login /><Toaster /></div>
   return (
-    <>
+    <div key={lang}>
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<Dashboard />} />
@@ -27,6 +31,6 @@ export default function App() {
         </Route>
       </Routes>
       <Toaster />
-    </>
+    </div>
   )
 }

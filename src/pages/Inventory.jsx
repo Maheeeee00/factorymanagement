@@ -44,8 +44,8 @@ export default function Inventory() {
         <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 p-4">
           <Tabs value={tab} onChange={(t) => { setParams(t === 'finished' ? { tab: 'finished' } : {}); setCat('all') }} tabs={[['raw', 'Raw materials', state.materials.length], ['finished', 'Finished goods', state.products.length]]} />
           <div className="relative min-w-[200px] flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} className="input pl-9" placeholder="Search name, SKU or location" />
+            <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} className="input ps-9" placeholder="Search name, SKU or location" />
           </div>
           <select value={cat} onChange={(e) => setCat(e.target.value)} className="input w-auto">
             <option value="all">All categories</option>

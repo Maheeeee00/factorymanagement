@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Lock, Mail, ArrowRight, Boxes, ClipboardList, History, Gauge } from 'lucide-react'
 import { useStore } from '../lib/store'
-import { Logo } from '../components/ui'
+import { Logo, LangToggle } from '../components/ui'
 
 export default function Login() {
   const { state, dispatch } = useStore()
@@ -39,16 +39,17 @@ export default function Login() {
       <div className="relative flex items-center justify-center overflow-hidden p-6 sm:p-12">
         <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-violet-300/40 blur-3xl animate-blob lg:hidden" />
         <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-300/40 blur-3xl animate-blob [animation-delay:-6s] lg:hidden" />
+        <div className="absolute end-4 top-4 z-10 sm:end-6 sm:top-6"><LangToggle /></div>
         <div className="relative w-full max-w-sm animate-fadeUp">
           <div className="lg:hidden"><Logo /></div>
           <h2 className="mt-8 text-3xl font-extrabold text-ink-900 lg:mt-0">Welcome back</h2>
           <p className="mt-1 text-slate-500">Sign in to {state.settings.companyName}</p>
           <form onSubmit={submit} className="mt-8 space-y-4">
             <label className="block"><span className="label">Email</span>
-              <div className="relative"><Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" /><input className="input pl-9" value={email} onChange={(e) => { setEmail(e.target.value); setErr('') }} /></div>
+              <div className="relative"><Mail className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" /><input className="input ps-9" value={email} onChange={(e) => { setEmail(e.target.value); setErr('') }} /></div>
             </label>
             <label className="block"><span className="label">Password</span>
-              <div className="relative"><Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" /><input type="password" className="input pl-9" value={password} onChange={(e) => { setPassword(e.target.value); setErr('') }} /></div>
+              <div className="relative"><Lock className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" /><input type="password" className="input ps-9" value={password} onChange={(e) => { setPassword(e.target.value); setErr('') }} /></div>
             </label>
             {err && <p className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{err}</p>}
             <button className="btn-primary shine w-full py-3 text-base">Sign in <ArrowRight className="h-4 w-4" /></button>

@@ -11,6 +11,7 @@ export const DEFAULT_SETTINGS = {
   lowStockAlerts: true,
   orderPrefix: 'SO',
   purchasePrefix: 'PO',
+  lang: 'en',
 }
 
 export const MATERIAL_CATEGORIES = ['Grain', 'Bags', 'Consumables']

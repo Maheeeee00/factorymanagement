@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
-import { STATUS_CLS, STATUS_LABEL } from '../lib/store'
+import { STATUS_CLS, STATUS_LABEL, useStore } from '../lib/store'
 
 export function Logo({ dark = false, iconOnly = false }) {
   return (
@@ -157,6 +157,21 @@ export function Toaster() {
   return (
     <div className="pointer-events-none fixed bottom-24 left-4 right-4 z-[60] flex flex-col items-center gap-2 sm:bottom-5 sm:left-auto sm:right-5 sm:items-end">
       {items.map((t) => <div key={t.id} className="animate-popIn rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-3 text-sm font-semibold text-white shadow-2xl">✓ {t.msg}</div>)}
+    </div>
+  )
+}
+
+// English / Urdu switch
+export function LangToggle({ onDark = false }) {
+  const { state, dispatch } = useStore()
+  const lang = state.settings.lang || 'en'
+  const base = onDark ? 'bg-white/15 ring-white/25 backdrop-blur' : 'bg-white ring-slate-200 shadow-card'
+  const off = onDark ? 'text-white/80 hover:text-white' : 'text-slate-500 hover:text-ink-900'
+  return (
+    <div data-no-tr dir="ltr" className={`relative flex shrink-0 items-center rounded-xl p-1 ring-1 ${base}`} role="group" aria-label="Language">
+      <span className={`absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-lg bg-gradient-to-r from-amber-400 to-pink-500 shadow transition-all duration-300 ${lang === 'ur' ? 'left-[calc(50%)]' : 'left-1'}`} />
+      <button type="button" onClick={() => dispatch({ type: 'LANG', lang: 'en' })} className={`relative z-10 w-11 rounded-lg py-1 text-xs font-bold transition ${lang === 'en' ? 'text-white' : off}`}>EN</button>
+      <button type="button" onClick={() => dispatch({ type: 'LANG', lang: 'ur' })} className={`relative z-10 w-11 rounded-lg py-0.5 text-sm font-bold transition ${lang === 'ur' ? 'text-white' : off}`} style={{ fontFamily: "'Noto Nastaliq Urdu', serif", lineHeight: 1.6 }}>اردو</button>
     </div>
   )
 }

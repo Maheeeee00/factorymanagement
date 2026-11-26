@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, Boxes, Package, ClipboardList, History, Settings, LogOut, Menu, X, Bell, Search, AlertTriangle } from 'lucide-react'
 import { useStore, timeAgo } from '../lib/store'
-import { Logo } from '../components/ui'
+import { Logo, LangToggle } from '../components/ui'
 
 const NAV = [
   ['Dashboard', '/', LayoutDashboard],
@@ -43,8 +43,8 @@ export default function Layout() {
         {NAV.map(([l, to, Icon]) => (
           <NavLink key={to} to={to} end={to === '/'} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${isActive ? 'bg-gradient-to-r from-brand-600 via-violet-600 to-fuchsia-600 anim-gradient text-white shadow-glow' : 'hover:translate-x-1 hover:bg-white/5 hover:text-white'}`}>
             <Icon className="h-5 w-5" />{l}
-            {l === 'Inventory' && alerts.length > 0 && <span className="ml-auto chip bg-amber-500 text-white">{alerts.length}</span>}
-            {l === 'Orders' && pendingOrders > 0 && <span className="ml-auto chip bg-white/15 text-white">{pendingOrders}</span>}
+            {l === 'Inventory' && alerts.length > 0 && <span className="ms-auto chip bg-amber-500 text-white">{alerts.length}</span>}
+            {l === 'Orders' && pendingOrders > 0 && <span className="ms-auto chip bg-white/15 text-white">{pendingOrders}</span>}
           </NavLink>
         ))}
       </nav>
@@ -73,10 +73,11 @@ export default function Layout() {
             <div className="min-w-0 leading-tight"><p className="truncate font-display text-base font-extrabold text-white">{current?.[0] || 'Factora'}</p><p className="truncate text-[11px] text-white/75">{state.settings.companyName}</p></div>
           </div>
           <form onSubmit={(e) => { e.preventDefault(); if (q.trim()) nav(`/history?q=${encodeURIComponent(q.trim())}`) }} className="relative hidden max-w-sm flex-1 md:block">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} className="w-full rounded-xl border-0 bg-white/15 py-2.5 pl-9 pr-3 text-sm text-white ring-1 ring-white/25 placeholder:text-white/65 backdrop-blur focus:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white/60" placeholder="Search history: order no., SKU, item…" />
+            <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/70" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} className="w-full rounded-xl border-0 bg-white/15 py-2.5 ps-9 pr-3 text-sm text-white ring-1 ring-white/25 placeholder:text-white/65 backdrop-blur focus:bg-white/25 focus:outline-none focus:ring-2 focus:ring-white/60" placeholder="Search history: order no., SKU, item…" />
           </form>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ms-auto flex items-center gap-2">
+            <LangToggle onDark />
             <span className="hidden items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-sm font-medium text-white/90 ring-1 ring-white/20 lg:flex"><span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75" /><span className="relative h-2 w-2 rounded-full bg-emerald-400" /></span>{new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}</span>
             <div className="relative">
               <button onClick={() => setBell(!bell)} className="relative rounded-xl bg-white/15 p-2.5 text-white ring-1 ring-white/25 backdrop-blur hover:bg-white/25">

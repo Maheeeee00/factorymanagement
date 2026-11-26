@@ -47,8 +47,8 @@ export default function Orders() {
         <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 p-4">
           <Tabs value={type} onChange={(t) => { setType(t); setStatus('all'); setPage(0) }} tabs={[['sales', 'Sales orders', state.orders.filter((o) => o.type === 'sales').length], ['purchase', 'Purchase orders', state.orders.filter((o) => o.type === 'purchase').length]]} />
           <div className="relative min-w-[200px] flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input value={q} onChange={(e) => { setQ(e.target.value); setPage(0) }} className="input pl-9" placeholder={`Search order no. or ${isSales ? 'customer' : 'vendor'}`} />
+            <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input value={q} onChange={(e) => { setQ(e.target.value); setPage(0) }} className="input ps-9" placeholder={`Search order no. or ${isSales ? 'customer' : 'vendor'}`} />
           </div>
         </div>
         <div className="no-scrollbar flex gap-2 overflow-x-auto border-b border-slate-100 px-4 py-3">
@@ -155,7 +155,7 @@ function OrderDetail({ order, onClose }) {
             {order.items.map((i) => <tr key={i.id}><td className="py-2.5 font-medium">{i.name}</td><td className="py-2.5 text-right">{fmtQty(i.qty)}</td><td className="py-2.5 text-right text-slate-500">{money(i.price)}</td><td className="py-2.5 text-right font-semibold">{money(i.qty * i.price)}</td></tr>)}
           </tbody>
         </table>
-        <div className="ml-auto max-w-xs space-y-1 text-sm">
+        <div className="ms-auto max-w-xs space-y-1 text-sm">
           <div className="flex justify-between text-slate-600"><span>Subtotal</span><span>{money(order.subtotal)}</span></div>
           <div className="flex justify-between text-slate-600"><span>Sales tax</span><span>{money(order.tax)}</span></div>
           <div className="flex justify-between border-t pt-2 text-base font-bold text-ink-900"><span>Total</span><span>{money(order.total)}</span></div>
@@ -274,7 +274,7 @@ function NewOrder({ type, onClose, onCreated }) {
           </div>
         </div>
         <Field label="Notes (optional)"><input className="input" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Delivery instructions, packing, payment terms…" /></Field>
-        <div className="ml-auto max-w-xs space-y-1 text-sm">
+        <div className="ms-auto max-w-xs space-y-1 text-sm">
           <div className="flex justify-between text-slate-600"><span>Subtotal</span><span>{money(subtotal)}</span></div>
           <div className="flex justify-between text-slate-600"><span>Sales tax ({state.settings.taxRate}%)</span><span>{money(tax)}</span></div>
           <div className="flex justify-between border-t pt-2 text-base font-bold text-ink-900"><span>Total</span><span>{money(subtotal + tax)}</span></div>

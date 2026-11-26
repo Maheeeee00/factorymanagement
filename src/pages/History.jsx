@@ -56,8 +56,8 @@ export default function History() {
       <div className="card">
         <div className="flex flex-wrap items-center gap-3 border-b border-slate-100 p-4">
           <div className="relative w-full sm:w-auto sm:min-w-[220px] sm:flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input value={q} onChange={(e) => { setQ(e.target.value); setLimit(40) }} className="input pl-9" placeholder="Search order no., SKU, item, user…" />
+            <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input value={q} onChange={(e) => { setQ(e.target.value); setLimit(40) }} className="input ps-9" placeholder="Search order no., SKU, item, user…" />
           </div>
           <select value={range} onChange={(e) => setRange(e.target.value)} className="input flex-1 sm:w-auto sm:flex-none">{RANGES.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>
           <select value={user} onChange={(e) => setUser(e.target.value)} className="input flex-1 sm:w-auto sm:flex-none"><option value="all">All users</option>{users.map((u) => <option key={u}>{u}</option>)}</select>
@@ -71,12 +71,12 @@ export default function History() {
           {groups.map((g) => (
             <div key={g.d} className="mb-6 last:mb-0">
               <p className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">{dayLabel(g.d)}</p>
-              <div className="stagger relative space-y-1 border-l-2 border-indigo-100 pl-5 sm:pl-6">
+              <div className="stagger relative space-y-1 border-s-2 border-indigo-100 ps-5 sm:ps-6">
                 {g.items.map((h) => {
                   const [Icon, cls] = KIND_ICON[h.kind] || KIND_ICON.edit
                   return (
                     <div key={h.id} className="relative flex flex-col gap-1 rounded-xl px-2 py-2.5 hover:bg-slate-50 sm:flex-row sm:items-start sm:gap-3 sm:px-3">
-                      <span className={`absolute -left-[37px] top-2.5 grid h-8 w-8 place-items-center rounded-lg ring-4 ring-white sm:-left-[42px] ${cls}`}><Icon className="h-4 w-4" /></span>
+                      <span className={`absolute -start-[37px] top-2.5 grid h-8 w-8 place-items-center rounded-lg ring-4 ring-white sm:-start-[42px] ${cls}`}><Icon className="h-4 w-4" /></span>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-ink-900">
                           {h.action}{h.item ? <span className="font-normal text-slate-600"> · {h.item}</span> : null}

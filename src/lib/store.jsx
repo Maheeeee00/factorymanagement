@@ -50,6 +50,7 @@ function reducer(state, a) {
     case 'RESET': return { ...initialState(), session: state.session }
     case 'LOGIN': return { ...state, session: a.user }
     case 'LOGOUT': return { ...state, session: null }
+    case 'LANG': return { ...state, settings: { ...state.settings, lang: a.lang } }
 
     case 'ADJUST': {
       // a.kind: 'material' | 'product'; a.delta: +/-; a.reason
