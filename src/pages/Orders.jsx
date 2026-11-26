@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Plus, Search, Download, ClipboardList, X, Check, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Plus, Search, Download, ClipboardList, X, Check, AlertTriangle, ChevronLeft, ChevronRight, UserPlus } from 'lucide-react'
 import { useStore, useMoney, fmtDate, fmtQty, toCSV, download, STATUS_LABEL, SALES_FLOW, PURCHASE_FLOW } from '../lib/store'
 import { PageHead, Tabs, StatusBadge, Modal, Field, Empty, toast } from '../components/ui'
 
@@ -38,7 +38,7 @@ export default function Orders() {
 
   return (
     <div>
-      <PageHead tone="purple" icon={ClipboardList} title="Orders" sub="Sales orders to customers and purchase orders to suppliers" stats={[['Open', all.filter((o) => !['delivered', 'received', 'cancelled'].includes(o.status)).length], ['Overdue', all.filter((o) => !['delivered', 'received', 'cancelled'].includes(o.status) && o.dueDate < now).length], ['Total value', (() => { const v = all.filter((o) => o.status !== 'cancelled').reduce((a, o) => a + o.total, 0); return v >= 1e6 ? `${state.settings.currency} ${(v / 1e6).toFixed(1)}M` : money(v) })()]]}>
+      <PageHead tone="purple" icon={ClipboardList} title="Orders" sub="Sales orders to customers and purchase orders to vendors" stats={[['Open', all.filter((o) => !['delivered', 'received', 'cancelled'].includes(o.status)).length], ['Overdue', all.filter((o) => !['delivered', 'received', 'cancelled'].includes(o.status) && o.dueDate < now).length], ['Total value', (() => { const v = all.filter((o) => o.status !== 'cancelled').reduce((a, o) => a + o.total, 0); return v >= 1e6 ? `${state.settings.currency} ${(v / 1e6).toFixed(1)}M` : money(v) })()]]}>
         <button onClick={exportCsv} className="btn-ghost"><Download className="h-4 w-4" />Export</button>
         <button onClick={() => setCreating(type)} className="btn-primary"><Plus className="h-4 w-4" /><span className="sm:hidden">New order</span><span className="hidden sm:inline">{isSales ? 'New sales order' : 'New purchase order'}</span></button>
       </PageHead>
@@ -48,7 +48,7 @@ export default function Orders() {
           <Tabs value={type} onChange={(t) => { setType(t); setStatus('all'); setPage(0) }} tabs={[['sales', 'Sales orders', state.orders.filter((o) => o.type === 'sales').length], ['purchase', 'Purchase orders', state.orders.filter((o) => o.type === 'purchase').length]]} />
           <div className="relative min-w-[200px] flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <input value={q} onChange={(e) => { setQ(e.target.value); setPage(0) }} className="input pl-9" placeholder={`Search order no. or ${isSales ? 'customer' : 'supplier'}`} />
+            <input value={q} onChange={(e) => { setQ(e.target.value); setPage(0) }} className="input pl-9" placeholder={`Search order no. or ${isSales ? 'customer' : 'vendor'}`} />
           </div>
         </div>
         <div className="no-scrollbar flex gap-2 overflow-x-auto border-b border-slate-100 px-4 py-3">
@@ -78,7 +78,7 @@ export default function Orders() {
 
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-sm">
-            <thead className="bg-slate-50"><tr><th className="th">Order</th><th className="th">Date</th><th className="th">{isSales ? 'Customer' : 'Supplier'}</th><th className="th">Items</th><th className="th">Due</th><th className="th text-right">Total</th><th className="th text-right">Status</th></tr></thead>
+            <thead className="bg-slate-50"><tr><th className="th">Order</th><th className="th">Date</th><th className="th">{isSales ? 'Customer' : 'Vendor'}</th><th className="th">Items</th><th className="th">Due</th><th className="th text-right">Total</th><th className="th text-right">Status</th></tr></thead>
             <tbody className="stagger divide-y divide-slate-100">
               {shown.map((o) => {
                 const open = !['delivered', 'received', 'cancelled'].includes(o.status)
@@ -144,7 +144,7 @@ function OrderDetail({ order, onClose }) {
         )}
 
         <div className="grid grid-cols-2 gap-3 rounded-2xl bg-slate-50 p-4 text-sm sm:grid-cols-4">
-          <div className="col-span-2"><p className="text-xs text-slate-500">{isSales ? 'Customer' : 'Supplier'}</p><p className="font-semibold">{party?.name || '—'}</p><p className="text-xs text-slate-500">{party?.city} · {party?.phone}</p></div>
+          <div className="col-span-2"><p className="text-xs text-slate-500">{isSales ? 'Customer' : 'Vendor'}</p><p className="font-semibold">{party?.name || '—'}</p><p className="text-xs text-slate-500">{party?.city} · {party?.phone}</p></div>
           <div><p className="text-xs text-slate-500">Order date</p><p className="font-semibold">{fmtDate(order.createdAt)}</p></div>
           <div><p className="text-xs text-slate-500">Due date</p><p className="font-semibold">{fmtDate(order.dueDate)}</p></div>
         </div>
@@ -189,6 +189,17 @@ function NewOrder({ type, onClose, onCreated }) {
   const parties = isSales ? state.customers : state.suppliers
   const catalog = isSales ? state.products.map((p) => ({ id: p.id, name: p.name, price: p.price, stock: p.qty, unit: 'bags' })) : state.materials.map((m) => ({ id: m.id, name: m.name, price: m.cost, stock: m.qty, unit: m.unit }))
   const [party, setParty] = useState(parties[0]?.id || '')
+  const [adding, setAdding] = useState(false)
+  const [np, setNp] = useState({ name: '', city: '', phone: '' })
+  const saveParty = () => {
+    if (!np.name.trim()) return
+    const id = (isSales ? 'c' : 'sp') + Date.now().toString(36)
+    dispatch({ type: 'SAVE_PARTY', kind: isSales ? 'customer' : 'supplier', item: { id, name: np.name.trim(), city: np.city.trim(), phone: np.phone.trim() } })
+    setParty(id)
+    setNp({ name: '', city: '', phone: '' })
+    setAdding(false)
+    toast(`${isSales ? 'Customer' : 'Vendor'} added`)
+  }
   const [due, setDue] = useState(new Date(Date.now() + 7 * DAY).toISOString().slice(0, 10))
   const [lines, setLines] = useState([{ id: '', qty: '', price: '' }])
   const [notes, setNotes] = useState('')
@@ -211,9 +222,34 @@ function NewOrder({ type, onClose, onCreated }) {
     <Modal open onClose={onClose} title={isSales ? 'New sales order' : 'New purchase order'} wide>
       <form onSubmit={submit} className="space-y-5">
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label={isSales ? 'Customer' : 'Supplier'}><select required className="input" value={party} onChange={(e) => setParty(e.target.value)}>{parties.map((p) => <option key={p.id} value={p.id}>{p.name} · {p.city}</option>)}</select></Field>
+          <div>
+            <span className="label">{isSales ? 'Customer' : 'Vendor / supplier'}</span>
+            <div className="flex gap-2">
+              <select required className="input min-w-0 flex-1" value={party} onChange={(e) => setParty(e.target.value)}>
+                {!parties.length && <option value="">No {isSales ? 'customers' : 'vendors'} yet</option>}
+                {parties.map((p) => <option key={p.id} value={p.id}>{p.name}{p.city ? ` · ${p.city}` : ''}</option>)}
+              </select>
+              <button type="button" onClick={() => setAdding(!adding)} className={`btn shrink-0 px-3 ring-1 ${adding ? 'bg-violet-50 text-violet-700 ring-violet-300' : 'bg-white text-slate-700 ring-slate-200 hover:bg-slate-50'}`} title={isSales ? 'Add new customer' : 'Add new vendor'}>
+                <UserPlus className="h-4 w-4" /><span className="hidden sm:inline">Add new</span>
+              </button>
+            </div>
+          </div>
           <Field label={isSales ? 'Delivery due' : 'Expected delivery'}><input type="date" required className="input" value={due} onChange={(e) => setDue(e.target.value)} /></Field>
         </div>
+        {adding && (
+          <div className="animate-fadeUp rounded-2xl bg-gradient-to-br from-violet-50 to-fuchsia-50 p-4 ring-1 ring-violet-200">
+            <p className="mb-3 flex items-center gap-2 font-bold text-violet-800"><UserPlus className="h-4 w-4" />New {isSales ? 'customer' : 'vendor'}</p>
+            <div className="grid gap-2 sm:grid-cols-3">
+              <input autoFocus className="input" placeholder="Name *" value={np.name} onChange={(e) => setNp({ ...np, name: e.target.value })} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); saveParty() } }} />
+              <input className="input" placeholder="City" value={np.city} onChange={(e) => setNp({ ...np, city: e.target.value })} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); saveParty() } }} />
+              <input className="input" placeholder="Phone" value={np.phone} onChange={(e) => setNp({ ...np, phone: e.target.value })} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); saveParty() } }} />
+            </div>
+            <div className="mt-3 flex gap-2">
+              <button type="button" disabled={!np.name.trim()} onClick={saveParty} className="btn-primary flex-1 sm:flex-none"><Check className="h-4 w-4" />Save & select</button>
+              <button type="button" onClick={() => setAdding(false)} className="btn-ghost">Cancel</button>
+            </div>
+          </div>
+        )}
         <div className="rounded-2xl ring-1 ring-slate-200">
           <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
             <p className="font-bold">Items</p>

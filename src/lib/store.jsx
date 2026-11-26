@@ -144,7 +144,7 @@ function reducer(state, a) {
     case 'SAVE_PARTY': {
       const key = a.kind === 'customer' ? 'customers' : 'suppliers'
       const exists = state[key].some((x) => x.id === a.item.id)
-      const item = exists ? a.item : { ...a.item, id: uid(a.kind === 'customer' ? 'c' : 'sp') }
+      const item = exists ? a.item : { ...a.item, id: a.item.id || uid(a.kind === 'customer' ? 'c' : 'sp') }
       return { ...state, [key]: exists ? state[key].map((x) => (x.id === item.id ? item : x)) : [...state[key], item] }
     }
     case 'DELETE_PARTY': {

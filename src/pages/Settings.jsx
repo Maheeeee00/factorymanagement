@@ -3,7 +3,7 @@ import { Settings as SettingsIcon, Building2, Users, Truck, Database, Save, Plus
 import { useStore } from '../lib/store'
 import { PageHead, Toggle, Modal, Field, ConfirmButton, toast } from '../components/ui'
 
-const SECTIONS = [['company', 'Company', Building2], ['parties', 'Customers & suppliers', Truck], ['users', 'Users & roles', Users], ['data', 'Data & backup', Database]]
+const SECTIONS = [['company', 'Company', Building2], ['parties', 'Customers & vendors', Truck], ['users', 'Users & roles', Users], ['data', 'Data & backup', Database]]
 
 export default function Settings() {
   const [sec, setSec] = useState('company')
@@ -93,7 +93,7 @@ function Parties() {
   return (
     <>
       {block('customer', 'Customers', state.customers, Users)}
-      {block('supplier', 'Suppliers', state.suppliers, Truck)}
+      {block('supplier', 'Vendors (suppliers)', state.suppliers, Truck)}
       <Modal open={!!edit} onClose={() => setEdit(null)} title={edit ? `${edit.item.id ? 'Edit' : 'Add'} ${edit.kind}` : ''}>
         {edit && (
           <form onSubmit={(e) => { e.preventDefault(); dispatch({ type: 'SAVE_PARTY', kind: edit.kind, item: edit.item }); toast('Saved'); setEdit(null) }} className="space-y-4">
